@@ -104,9 +104,14 @@ noos-enterprise/
 ├── README.md                    # 本文件
 ├── AGENTS.md                    # Agent 探索规则
 ├── VISION.md                    # 项目愿景和价值原则
+├── LICENSE                      # Apache 2.0 许可证
 ├── explorations/                # 探索任务
 │   └── 0001-ai-era-software-value/
-│       └── README.md           # 第一个探索任务
+│       ├── README.md           # 第一个探索任务
+│       └── hypotheses/         # 产品假设文档
+├── skills/                      # Agent Skills 目录
+│   ├── README.md               # Skills 说明
+│   └── nuwa-skill/             # 女娲.skill（花叔）
 └── templates/                   # 模板
     ├── hypothesis-template.md   # 机会假设模板
     └── experiment-template.md   # 实验记录模板
@@ -114,7 +119,7 @@ noos-enterprise/
 
 ## 探索日志
 
-- **2026-11-10**：启动 Noos Enterprise，开始第一次探索任务
+- **2026-11-10**：启动 Noos Enterprise，开始第一次探索任务；集成花叔的女娲 skill；许可证更新为 Apache 2.0
 
 ---
 
