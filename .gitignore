@@ -1,0 +1,65 @@
+# Secrets and credentials
+*.key
+*.pem
+.env
+.env.*
+.secrets/
+credentials/
+
+# API keys and tokens (even in config files)
+# Manually add any file containing sensitive data
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+
+# Data and logs (unless explicitly committed)
+*.log
+data/
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Build artifacts
+dist/
+build/
+*.o
+*.so
+*.dll
+
+# Database files (local)
+*.sqlite
+*.db
+
+# Sensitive research data
+# User interviews, private feedback, etc.
+private/
+sensitive/
+*-private.md
