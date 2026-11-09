@@ -24,11 +24,18 @@ AI 让软件开发成本急剧下降之后：
    - AI 使用在不同规模企业和人群间存在差距
    - 技术普及和实际受益并不是一回事
 
-## 研究发现（L1 证据）
+## 研究发现
 
 ### 1. 软件竞争优势可能从代码转向工作流、专有数据、集成和信任
 
-**来源**：EY 对 400 名欧洲软件 CTO 的调查
+**来源**：Beyond the code: How AI is redefining the software industry  
+**发布方**：EY-Parthenon  
+**发布日期**：2026-10-08  
+**研究对象**：400 名欧洲软件 CTO，覆盖 13 个欧洲国家（电话和在线访谈，43 分钟平均完成时间，14 项数据质量检查，25 天实地工作）  
+**研究方法**：调查研究  
+**核心发现**：软件防御性正从代码和功能转向工作流所有权、专有数据、集成和信任。超过四成技术领导者表示，客户在续约时 routinely 询问产品是否可以用 AI 重建或替换。三分之一 CTO 预计 3-5 年内超过一半的新生产代码将由 AI 编写或 Agent 生成。  
+**适用限制**：样本偏向欧洲、CTO 视角、可能偏向大企业；结论反映的是技术领导者观点而非实际市场结果  
+**原始链接**：https://ey.com/en_nl/insights/strategy/how-ai-is-redefining-the-software-industry
 
 **洞察**：
 - 代码本身正在变成 commodity
@@ -43,7 +50,14 @@ AI 让软件开发成本急剧下降之后：
 
 ### 2. Agent 可能改变传统 SaaS 的使用和收费方式
 
-**来源**：Gartner 的市场预测
+**来源**：Gartner Says $234 Billion in Enterprise Application Software Spend Is at Risk from Agentic AI  
+**发布方**：Gartner  
+**发布日期**：2026-07-01  
+**研究对象**：企业软件市场分析  
+**研究方法**：市场预测和分析  
+**核心发现**：到 2030 年，高达 2340 亿美元的企业应用支出将受到"智能体套利"（agentic arbitrage）的冲击，占 SaaS 总支出的 20%。智能体套利是指 AI Agent 跨多个系统完成任务，大幅降低用户操作多个传统软件界面的需求。传统按席位收费的模式被打破，软件从"用户界面导向价值"转向"成果导向价值"。  
+**适用限制**：预测性质、基于当前趋势外推、可能受技术成熟度和市场接受度影响；主要关注大型企业市场  
+**原始链接**：https://www.gartner.com/en/newsroom/press-releases/2026-07-01-gartner-says-us-dollars-234-billion-in-enterprise-application-software-spend-is-at-risk-from-agentic-artificial-intelligence
 
 **洞察**：
 - 传统 SaaS 按席位收费的模式可能受到挑战
@@ -53,21 +67,35 @@ AI 让软件开发成本急剧下降之后：
 **对产品探索的意义**：
 如果 Agent 可以直接帮用户完成任务，那么"提供一个工具让用户自己操作"可能不是最好的产品形态。
 
-### 3. Agent 的自主性增加了消费者信任和责任问题
+### 3. Agent 的自主性增加了透明度、授权边界和问责机制的需求
 
-**来源**：英国 CMA 的消费者研究
+**来源**：Complying with consumer law when using AI agents / Agentic AI and consumers  
+**发布方**：UK Competition and Markets Authority (CMA)  
+**发布日期**：2026-03-09  
+**研究对象**：AI 智能体与消费者互动的法律和监管框架  
+**研究方法**：政策研究和合规指导  
+**核心发现**：企业仍然对 AI 系统带来的消费者结果承担责任，不能因智能体由第三方设计或提供而免责。违规企业最高可能面临全球营业额 10% 的罚款。真正值得研究的是：如何在更高自主性下建立透明度、授权边界和问责机制。企业必须告知消费者是否在与 AI 交互，必须训练 AI Agent 遵守消费者法律，必须定期监控 Agent 表现。  
+**适用限制**：英国监管环境、法律指导性质、不直接涉及产品设计；但为产品设计提供了合规边界  
+**原始链接**：https://www.gov.uk/government/publications/complying-with-consumer-law-when-using-ai-agents/complying-with-consumer-law-when-using-ai-agents
 
 **洞察**：
-- 当 Agent 代替用户做决策时，责任归属变得模糊
+- 企业不能以"AI 自主运行"为由推卸责任
 - 用户需要知道 Agent 在做什么，为什么这样做
 - 可靠性和透明度可能成为重要的竞争优势
 
 **对产品探索的意义**：
-Trust & Verification 可能是一个重要的产品方向。让 AI 工作结果可检查、可追溯、可纠正。
+Trust & Verification 可能是一个重要的产品方向。让 AI 工作结果可检查、可追溯、可纠正。同时需要设计清晰的授权边界和问责机制。
 
 ### 4. AI 使用在不同规模企业和人群间存在差距
 
-**来源**：OECD 的数字经济报告
+**来源**：OECD Digital Economy and Society Outlook 2026 / AI adoption by small and medium-sized enterprises  
+**发布方**：OECD  
+**发布日期**：2026-11-05（Outlook 2026）/ 2025-12-09（G7 讨论文件）  
+**研究对象**：OECD 成员国企业（10 名员工以上），特别是中小企业  
+**研究方法**：综合企业层面证据、统计数据、文献和政策经验  
+**核心发现**：2025 年 OECD 平均 20% 的企业使用 AI，而大型企业（250+ 员工）达 52%，是平均水平的 2.6 倍。大型企业 AI 采用率（40%）是小型企业（11.9%）的三倍多。在个人层面，生成式 AI 使用率达 37%，但年轻人（16-24 岁，68%）是老年人（55-74 岁，14%）的近 5 倍。技术普及和实际受益并不是一回事。  
+**适用限制**：主要是 G7/OECD 国家、数据年份不同、"中小企业"定义因国家而异；不直接涉及产品设计方案  
+**原始链接**：https://www.oecd.org/en/about/news/press-releases/2026/11/oecd-digital-economy-and-society-outlook-2026.html
 
 **洞察**：
 - 大企业比小企业更快采用 AI
