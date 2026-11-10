@@ -99,15 +99,20 @@ def fetch_star_history(repo_name, days_back=30):
     """
     获取项目的 star 历史
     
-    注意：GitHub API 不直接提供 star 历史，需要使用第三方服务或自行追踪
-    这里使用 stargazers API 获取部分数据
+    注意：GitHub API 不直接提供 star 历史，需要使用 stargazers API 分页获取
+    使用 Accept: application/vnd.github.v3.star+json 获取 starred_at 时间戳
+    
+    时间序列语义说明：
+    - "最近 7 天" 指的是日历日（calendar days），不是 "有记录的最近 7 个日期"
+    - 如果某天没有 star，该日不会出现在记录中，但计算时仍以日历日为基准
+    - days_back=30 表示获取最近 30 个日历日的数据
     
     Args:
         repo_name: 项目名称（如 "owner/repo"）
-        days_back: 获取最近多少天
+        days_back: 获取最近多少天（日历日）
     
     Returns:
-        list of dict: star 历史记录
+        list of dict: star 历史记录 [{"date": "YYYY-MM-DD", "stars": count}, ...]
     """
     headers = {
         "Accept": "application/vnd.github.v3.star+json",
@@ -116,36 +121,59 @@ def fetch_star_history(repo_name, days_back=30):
     if GITHUB_CONFIG["token"]:
         headers["Authorization"] = f"token {GITHUB_CONFIG['token']}"
     
-    url = f"https://api.github.com/repos/{repo_name}/stargazers"
+    # 分页获取所有 stargazers
+    all_stargazers = []
+    page = 1
+    per_page = 100  # 最大每页 100 条
     
-    try:
-        response = requests.get(url, headers=headers, timeout=30)
-        response.raise_for_status()
+    while True:
+        url = f"https://api.github.com/repos/{repo_name}/stargazers"
+        params = {
+            "per_page": per_page,
+            "page": page
+        }
         
-        stargazers = response.json()
-        
-        # 按日期统计
-        star_counts = {}
-        cutoff_date = datetime.now() - timedelta(days=days_back)
-        
-        for star in stargazers:
-            starred_at = star.get("starred_at")
-            if starred_at:
-                date = starred_at[:10]  # YYYY-MM-DD
+        try:
+            response = requests.get(url, headers=headers, params=params, timeout=30)
+            response.raise_for_status()
+            
+            stargazers = response.json()
+            
+            if not stargazers:
+                break
+            
+            all_stargazers.extend(stargazers)
+            
+            # 检查是否还有更多页
+            if len(stargazers) < per_page:
+                break
+            
+            page += 1
+            time.sleep(0.5)  # 避免速率限制
+            
+        except Exception as e:
+            print(f"  ✗ 获取 {repo_name} star 历史第 {page} 页失败: {e}")
+            break
+    
+    # 按日期统计
+    star_counts = {}
+    cutoff_date = datetime.now() - timedelta(days=days_back)
+    
+    for star in all_stargazers:
+        starred_at = star.get("starred_at")
+        if starred_at:
+            date = starred_at[:10]  # YYYY-MM-DD
+            star_date = datetime.strptime(date, "%Y-%m-%d")
+            if star_date >= cutoff_date:
                 star_counts[date] = star_counts.get(date, 0) + 1
-        
-        # 转换为列表
-        history = [
-            {"date": date, "stars": count}
-            for date, count in sorted(star_counts.items())
-            if datetime.strptime(date, "%Y-%m-%d") >= cutoff_date
-        ]
-        
-        return history
-        
-    except Exception as e:
-        print(f"  ✗ 获取 {repo_name} star 历史失败: {e}")
-        return []
+    
+    # 转换为列表（已过滤并排序）
+    history = [
+        {"date": date, "stars": count}
+        for date, count in sorted(star_counts.items())
+    ]
+    
+    return history
 
 
 def save_repos_to_json(repos, date_str=None):
@@ -167,13 +195,21 @@ def save_repos_to_db(repos):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    inserted = 0
+    processed = 0
     for repo in repos:
         try:
             cursor.execute("""
-                INSERT OR IGNORE INTO github_repos 
+                INSERT INTO github_repos 
                 (repo, description, language, stars, forks, created_at, updated_at, topics)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(repo) DO UPDATE SET
+                    description = excluded.description,
+                    language = excluded.language,
+                    stars = excluded.stars,
+                    forks = excluded.forks,
+                    created_at = excluded.created_at,
+                    updated_at = excluded.updated_at,
+                    topics = excluded.topics
             """, (
                 repo["repo"],
                 repo["description"],
@@ -184,16 +220,15 @@ def save_repos_to_db(repos):
                 repo["updated_at"],
                 json.dumps(repo["topics"])
             ))
-            if cursor.rowcount > 0:
-                inserted += 1
+            processed += 1
         except Exception as e:
-            print(f"  ✗ 插入项目失败 {repo['repo']}: {e}")
+            print(f"  ✗ 插入/更新项目失败 {repo['repo']}: {e}")
     
     conn.commit()
     conn.close()
     
-    print(f"✓ 数据库插入 {inserted} 个项目")
-    return inserted
+    print(f"✓ 数据库处理 {processed} 个项目（新增+更新）")
+    return processed
 
 
 def save_star_history_to_db(repo_name, history):
@@ -204,22 +239,22 @@ def save_star_history_to_db(repo_name, history):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    inserted = 0
+    processed = 0
     for record in history:
         try:
             cursor.execute("""
-                INSERT OR IGNORE INTO star_history (repo, date, stars)
+                INSERT INTO star_history (repo, date, stars)
                 VALUES (?, ?, ?)
+                ON CONFLICT(repo, date) DO UPDATE SET stars = excluded.stars
             """, (repo_name, record["date"], record["stars"]))
-            if cursor.rowcount > 0:
-                inserted += 1
+            processed += 1
         except Exception as e:
-            print(f"  ✗ 插入 star 历史失败: {e}")
+            print(f"  ✗ 插入/更新 star 历史失败: {e}")
     
     conn.commit()
     conn.close()
     
-    return inserted
+    return processed
 
 
 def fetch_and_store_github(topics=None, max_repos_per_topic=50):
@@ -231,15 +266,20 @@ def fetch_and_store_github(topics=None, max_repos_per_topic=50):
     
     for topic in topics:
         repos = fetch_trending_repos(topic=topic)
-        all_repos.extend(repos)
         
-        # 限制每个主题的项目数
+        # 限制每个主题的项目数（在 extend 之前截断）
         if len(repos) > max_repos_per_topic:
             repos = repos[:max_repos_per_topic]
+        
+        all_repos.extend(repos)
     
-    # 去重
-    unique_repos = {repo["repo"]: repo for repo in all_repos}.values()
-    unique_repos = list(unique_repos)
+    # 去重（同一项目出现在多个 topic 中，保留 stars 最高的记录）
+    unique_dict = {}
+    for repo in all_repos:
+        name = repo["repo"]
+        if name not in unique_dict or repo["stars"] > unique_dict[name]["stars"]:
+            unique_dict[name] = repo
+    unique_repos = list(unique_dict.values())
     
     if unique_repos:
         save_repos_to_json(unique_repos)

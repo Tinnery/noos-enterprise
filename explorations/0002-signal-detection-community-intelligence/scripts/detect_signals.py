@@ -180,9 +180,13 @@ class SignalDetector:
             # 计算最近 7 天的平均增长
             recent_growth = np.mean(daily_growths[-7:])
             
-            # 计算历史平均增长和标准差
-            historical_mean = np.mean(daily_growths)
-            historical_std = np.std(daily_growths)
+            # 计算历史平均增长和标准差（排除最近 7 天，避免基准被当前异常值污染）
+            historical_data = daily_growths[:-7]
+            if len(historical_data) < 7:
+                # 历史数据不足 7 天，无法建立可靠基准，跳过
+                continue
+            historical_mean = np.mean(historical_data)
+            historical_std = np.std(historical_data)
             
             if historical_std == 0:
                 continue
