@@ -30,6 +30,9 @@ class SignalDetector:
         
         识别在短时间内被多个不相关领域引用的论文
         
+        注意：此检测器需要 citations 表数据，但 arXiv API 不直接提供引用列表。
+        当前实现需要额外的引用数据源（如 Semantic Scholar API）来填充 citations 表。
+        
         Args:
             days_back: 检测最近多少天
         
@@ -37,6 +40,15 @@ class SignalDetector:
             list of dict: 异常信号列表
         """
         print("正在检测引用网络异常...")
+        
+        # 检查 citations 表是否有数据
+        cursor = self.conn.execute("SELECT COUNT(*) as count FROM citations")
+        citation_count = cursor.fetchone()["count"]
+        
+        if citation_count == 0:
+            print("  ⚠ citations 表为空，引用网络异常检测暂不可用")
+            print("    需要额外的引用数据源（如 Semantic Scholar API）来填充引用关系")
+            return []
         
         cutoff_date = (datetime.now() - timedelta(days=days_back)).isoformat()
         
@@ -143,6 +155,7 @@ class SignalDetector:
             language = repo["language"]
             
             # 解析 star 历史
+            # 注意：star_history 表存储的是每日新增 star 数，不是累计数
             if not repo["history"]:
                 continue
             
@@ -150,7 +163,7 @@ class SignalDetector:
             for item in repo["history"].split(","):
                 if ":" in item:
                     date, stars = item.split(":")
-                    history.append({"date": date, "stars": int(stars)})
+                    history.append({"date": date, "daily_stars": int(stars)})
             
             if len(history) < 7:
                 continue
@@ -158,11 +171,8 @@ class SignalDetector:
             # 按日期排序
             history.sort(key=lambda x: x["date"])
             
-            # 计算每日增长
-            daily_growths = []
-            for i in range(1, len(history)):
-                growth = history[i]["stars"] - history[i-1]["stars"]
-                daily_growths.append(growth)
+            # 提取每日增长数（已经是增量，不需要再计算差值）
+            daily_growths = [item["daily_stars"] for item in history]
             
             if not daily_growths:
                 continue
@@ -215,7 +225,10 @@ class SignalDetector:
         
         if texts is None:
             # 从 HN 评论和帖子获取文本
-            cutoff_date = (datetime.now() - timedelta(days=days_back)).isoformat()
+            # 注意：hn_comments.time 和 hn_stories.time 存储为 Unix 时间戳（整数）
+            # 而 detected_date 存储为 ISO 字符串，需要分别处理
+            cutoff_timestamp = int((datetime.now() - timedelta(days=days_back)).timestamp())
+            cutoff_date = (datetime.now() - timedelta(days=days_back)).strftime("%Y-%m-%d")
             
             query = """
                 SELECT text FROM hn_comments
@@ -225,7 +238,7 @@ class SignalDetector:
                 WHERE detected_date >= ?
             """
             
-            cursor = self.conn.execute(query, (cutoff_date, cutoff_date))
+            cursor = self.conn.execute(query, (cutoff_timestamp, cutoff_date))
             texts = [row["text"] for row in cursor.fetchall() if row["text"]]
         
         if not texts:
@@ -290,7 +303,8 @@ class SignalDetector:
         print("正在检测跨社区重复话题...")
         
         threshold = SIGNAL_THRESHOLDS["recurring_topic"]
-        cutoff_date = (datetime.now() - timedelta(days=days_back)).isoformat()
+        cutoff_datetime = (datetime.now() - timedelta(days=days_back)).isoformat()
+        cutoff_date = (datetime.now() - timedelta(days=days_back)).strftime("%Y-%m-%d")
         
         # 从不同来源获取数据
         sources = {
@@ -298,7 +312,7 @@ class SignalDetector:
             "github": [],
         }
         
-        # HN 帖子
+        # HN 帖子（detected_date 存储为 YYYY-MM-DD 格式）
         query = """
             SELECT title, score FROM hn_stories
             WHERE detected_date >= ?
@@ -307,19 +321,19 @@ class SignalDetector:
         for row in cursor.fetchall():
             sources["hackernews"].append(row["title"])
         
-        # GitHub 项目描述
+        # GitHub 项目描述（updated_at 存储为 ISO 格式）
         query = """
             SELECT description FROM github_repos
             WHERE updated_at >= ?
         """
-        cursor = self.conn.execute(query, (cutoff_date,))
+        cursor = self.conn.execute(query, (cutoff_datetime,))
         for row in cursor.fetchall():
             if row["description"]:
                 sources["github"].append(row["description"])
         
-        # 简单的关键词提取（实际应用中应该用更复杂的方法）
-        def extract_keywords(texts, top_n=20):
-            """提取关键词"""
+        # 提取每个来源的关键词（保留计数）
+        def extract_keywords_with_counts(texts, top_n=20):
+            """提取关键词并保留计数"""
             from collections import Counter
             import re
             
@@ -338,33 +352,34 @@ class SignalDetector:
                 text_words = re.findall(r"\b[a-z]{3,}\b", text.lower())
                 words.extend([w for w in text_words if w not in stop_words])
             
-            # 返回最常见的词
-            return [word for word, count in Counter(words).most_common(top_n)]
+            # 返回最常见的词及其计数
+            return Counter(words).most_common(top_n)
         
-        # 提取每个来源的关键词
+        # 提取每个来源的关键词（保留计数）
         source_keywords = {}
         for source, texts in sources.items():
             if texts:
-                source_keywords[source] = set(extract_keywords(texts))
+                # 转换为 dict: {keyword: count}
+                source_keywords[source] = dict(extract_keywords_with_counts(texts))
         
         # 找出跨来源的共同关键词
-        all_keywords = defaultdict(lambda: {"sources": set(), "count": 0})
+        all_keywords = defaultdict(lambda: {"sources": set(), "total_count": 0})
         
-        for source, keywords in source_keywords.items():
-            for keyword in keywords:
+        for source, keywords_dict in source_keywords.items():
+            for keyword, count in keywords_dict.items():
                 all_keywords[keyword]["sources"].add(source)
-                all_keywords[keyword]["count"] += 1
+                all_keywords[keyword]["total_count"] += count
         
         # 筛选符合条件的关键词
         recurring = []
         for keyword, data in all_keywords.items():
-            if len(data["sources"]) >= threshold["min_communities"] and data["count"] >= threshold["min_occurrences"]:
+            if len(data["sources"]) >= threshold["min_communities"] and data["total_count"] >= threshold["min_occurrences"]:
                 recurring.append({
                     "topic": keyword,
                     "communities": list(data["sources"]),
-                    "occurrences": data["count"],
+                    "occurrences": data["total_count"],
                     "signal_type": "recurring_topic",
-                    "confidence": min(data["count"] / 10.0, 1.0),
+                    "confidence": min(data["total_count"] / 10.0, 1.0),
                 })
         
         # 按出现次数排序

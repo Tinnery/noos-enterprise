@@ -58,7 +58,7 @@ def fetch_arxiv_papers(days_back=7, max_results=None):
             "published": result.published.isoformat(),
             "categories": result.categories,
             "authors": [author.name for author in result.authors],
-            "references": [],  # arXiv API 不直接提供引用列表，需要额外处理
+            "references": [],  # arXiv API 不直接提供引用列表，需要额外数据源（如 Semantic Scholar API）
             "pdf_url": result.pdf_url,
         }
         papers.append(paper)

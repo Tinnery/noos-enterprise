@@ -57,7 +57,7 @@ SIGNAL_THRESHOLDS = {
         "min_mentions": 3,
     },
     "recurring_topic": {
-        "min_communities": 3,
+        "min_communities": 2,  # 当前系统仅采集 hackernews + github 两个来源
         "min_occurrences": 5,
     },
 }
