@@ -1,4 +1,4 @@
-# 09 — 代码变更可信验证：FastAPI 公开 PR 试点
+# 09 — 代码变更可信验证：公开 PR 实证试点
 
 **研究状态：** Pilot 完成；问题假设需要收窄，尚未形成产品结论  
 **研究日期：** 2026-11-10  
@@ -18,11 +18,11 @@
 
 如果成熟项目已经稳定解决这一问题，那么“自动重跑测试”或“给 PR 生成测试报告”本身就不构成足够有力的产品差异。
 
-本轮只使用公开 GitHub 仓库、Pull Request、代码差异和 Actions 日志。没有联系作者、访谈用户、收集个人数据或产生付费。
+本轮只使用公开 GitHub 仓库、Issue、Pull Request、代码差异和 Actions 日志。没有联系作者、访谈用户、收集个人数据或产生付费。
 
 ## 2. 样本选择与限制
 
-选择 FastAPI 在 2026-10-20 至 2026-10-21 期间围绕 Pydantic 的 AliasChoices 行为提交的一组已合并修复 PR。
+主样本选择 FastAPI 在 2026-10-20 至 2026-10-21 期间围绕 Pydantic 的 AliasChoices 行为提交的一组已合并修复 PR。随后增加 pytest 的一个独立问题修复 PR 作为跨项目对照，避免把 FastAPI 的 CI 设计误当成行业通用做法。
 
 纳入条件：
 
@@ -31,7 +31,7 @@
 3. 修复涉及运行时行为，且 PR 同时修改或新增测试。
 4. 能取得 base SHA、head SHA、文件差异和 Actions 记录。
 
-这是一组**目的性案例样本**，不是随机样本，也不是独立程序员总体的代表性样本。五个 PR 属于同一个项目、同一功能问题簇，提交者均为 FastAPI 项目维护者 tiangolo；不能把五个 PR 当成五个独立开发者，更不能据此估计整个行业的发生率。
+这是一组**目的性案例样本**，不是随机样本，也不是独立程序员总体的代表性样本。五个 FastAPI PR 属于同一个项目、同一功能问题簇，提交者均为 FastAPI 项目维护者 tiangolo；pytest 对照样本只有一个 PR，作者是 pytest 维护者 RonnyPfannschmidt。不能把六个 PR 当成六个独立开发者，更不能据此估计整个行业的发生率。
 
 AI 来源来自 PR 作者的自我披露：使用 Codex、gpt-6-astra，并由作者人工审阅。该披露能够证明作者公开作出了此项声明，不能独立证明 AI 参与了哪些具体代码行，也不能客观衡量人工审阅深度。
 
@@ -44,6 +44,7 @@ AI 来源来自 PR 作者的自我披露：使用 Codex、gpt-6-astra，并由�
 | [#16559](https://github.com/fastapi/fastapi/pull/16559) | 命名 JSON Body 参数的 AliasChoices | 3 个文件，+422 / -2 | Codex 辅助、人工审阅 | Test 检查成功；基线重放 26 项失败 |
 | [#16560](https://github.com/fastapi/fastapi/pull/16560) | Path 参数的 AliasChoices | 3 个文件，+304 / -4 | Codex 辅助、人工审阅 | Test 检查成功；基线重放日志出现 snapshot 交互异常，未计作明确行为红灯 |
 | [#16564](https://github.com/fastapi/fastapi/pull/16564) | Form 与 File 的验证错误位置 | 3 个文件，+216 / -27 | Codex 辅助、人工审阅 | Test 检查成功；基线重放 6 项失败 |
+| [pytest #15255](https://github.com/pytest-dev/pytest/pull/15255) | tmp_path / mktemp 编号目录的 O(N²) 性能问题 | 3 个文件，+155 / -4 | Claude Code / Claude Opus 5.5，作者声明阅读代码 | 跨平台 Test 矩阵成功；未观察到独立 base 重放 Job |
 
 ### 原始版本标识
 
@@ -55,7 +56,7 @@ AI 来源来自 PR 作者的自我披露：使用 Codex、gpt-6-astra，并由�
 | #16560 | b2ce629ace6bdd152d577e5f5e256a079ac1e4fd | 3f9495882ebf29c25bb1c014d7e7cac4a9570669 | 89317c7003d0cca25e56b5acbfc11aa2c1810e08 |
 | #16564 | 3b39c91cd1f221042313634db901c64615bb4fb5 | 3d92fbb407ca10c1e58f44ef13c53888a94aaaf8 | 1282e9a9f1ac0647cb2031c6dd9c1d5631ade4d4 |
 
-## 4. 最有价值的发现：FastAPI 已经实现了基线重放
+## 4. 最有价值的发现：基线重放已经存在，但并非唯一验证方式
 
 FastAPI 在该时间点的工作流文件：
 
@@ -137,6 +138,81 @@ PR #16560 和 #16555 的基线重放日志以 inline snapshot 的交互提示结
 本研究不把这两次记录算作明确的行为回归失败。它们被标记为**日志诊断不充分**。
 
 这两个样本反而暴露了一个测量问题：CI Job 的 success/failure 不能替代对测试输出和失败类型的检查。
+
+### 4.3 跨项目对照：pytest #15255
+
+来源：
+
+- [pytest PR #15255](https://github.com/pytest-dev/pytest/pull/15255)
+- [原始问题 #15254](https://github.com/pytest-dev/pytest/issues/15254)
+- [PR #15255 Ubuntu / Python 3.12 测试 Job](https://github.com/pytest-dev/pytest/actions/runs/40217223246/job/121240985185)
+
+PR 正文明确披露：
+
+> Written by Claude Opus 5.5 via Claude Code for the pytest maintainers; I prompted it, it did the work, I read it.
+
+这比只在项目描述中泛泛提及使用 AI 更具体，但仍然属于作者的公开声明。不能独立验证 Agent 实际编写了哪些代码，也不能把“我读了它”视为经过独立审计的证明。
+
+#### 问题和需求证据
+
+[Issue #15254](https://github.com/pytest-dev/pytest/issues/15254) 描述了一个可重现的性能问题：TempPathFactory.mktemp / tmp_path 每次都列出 basetemp 以寻找下一个编号；目录随着测试数量增长，因此一个测试会触发越来越大的目录扫描，整体出现 O(N²) 工作量。
+
+Issue 提供了可运行的参数化复现、运行环境和三次运行的中位数数据，并明确记录原有实现的限制。PR 选择了与 Issue 最初提出的 listing cache 不同的方案：每个 prefix 维护计数器，依赖 mkdir 决定名称是否冲突，连续冲突达到阈值后才扫描目录。
+
+Issue 和 PR 正文中的性能数字不完全相同：
+
+- Issue：1000 / 2000 / 4000 个测试，main 分别为 3.53 / 10.10 / 34.35 秒，修复方案为 1.53 / 3.03 / 5.78 秒。
+- PR：同样的测试数量，main 分别为 3.9 / 10.9 / 37.3 秒，PR 版本约为 3–4 / 3.5 / 7.5 秒；作者注明是在 noisy cloud box 上测量。
+
+两组数字的环境和测量描述不同，不能直接合并成一组精确性能提升值。本轮没有独立重新运行性能基准，因此只把它们记为作者提交的性能证据，不作为已独立复现的效果。
+
+#### 测试设计
+
+PR 修改了：
+
+- changelog/15254.improvement.rst
+- src/_pytest/tmpdir.py
+- testing/test_tmpdir.py
+
+新增测试围绕算法必须保持的结构性行为，而不只是简单的输出快照：
+
+- mktemp 正常路径不扫描 basetemp；
+- 已存在目录、文件和 dangling symlink 都能跳过；
+- 连续 50 个名字冲突后只执行一次目录扫描；
+- 重叠 prefix 不产生名称冲突；
+- 连续冲突达到上限后明确失败，不无限循环；
+- 其他 OSError（包括 Windows 删除期间可能出现的 PermissionError）按策略重试；
+- 相对 basetemp 情况下路径行为保持正确。
+
+这组测试的价值在于，它把性能优化背后的结构性要求变成可断言的不变量。例如测试会将目录扫描函数替换或包装，直接判断正常路径没有扫描，冲突路径只扫描一次。这比依赖一个波动较大的 CI wall-clock 阈值更可审查。
+
+#### CI 证据
+
+这次 PR 的 Actions run 中包含 package 和跨平台 build 矩阵。没有观察到独立的 changed-tests-on-base Job；因此，本次记录不能证明新增测试曾被自动应用到 base 版本重放。
+
+Ubuntu / Python 3.12 的 CI 日志显示：
+
+- 4705 passed
+- 50 skipped
+- 13 xfailed
+- 7 xpassed
+- 2 warnings
+- 345.85 秒
+
+该 run 的 package / build Jobs 均成功。它证明该 PR 版本在所运行矩阵中的测试结果，不等于独立证明性能数字，也不等于证明不存在所有回归风险。
+
+#### 这个对照案例改变了什么判断
+
+FastAPI 使用了明确的 base 重放机制；pytest 这个 PR 则主要通过可复现问题、结构性测试、完整测试矩阵和作者提交的性能测量构成证据链。
+
+因此，不能把 base 重放作为唯一正确的验收方法。对于不同类型的变更，合适的证据可能是：
+
+- 功能修复：错误输入在旧版本失败，在新版本满足预期行为；
+- 性能优化：可复现负载、基准条件、重复测量和结构性复杂度不变量；
+- 资源/文件系统行为：碰撞、权限错误、并发和平台差异测试；
+- 兼容性修改：旧输入、边界输入和接口契约的行为矩阵。
+
+真正值得研究的问题是：**PR 提供的验证证据是否与本次变更的风险和需求相匹配？**
 
 ## 5. 现有机制的边界
 
