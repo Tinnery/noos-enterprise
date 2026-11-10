@@ -31,7 +31,7 @@
 3. 修复涉及运行时行为，且 PR 同时修改或新增测试。
 4. 能取得 base SHA、head SHA、文件差异和 Actions 记录。
 
-这是一组**目的性案例样本**，不是随机样本，也不是独立程序员总体的代表性样本。五个 FastAPI PR 属于同一个项目、同一功能问题簇，提交者均为 FastAPI 项目维护者 tiangolo；pytest 对照样本只有一个 PR，作者是 pytest 维护者 RonnyPfannschmidt。不能把六个 PR 当成六个独立开发者，更不能据此估计整个行业的发生率。
+这是一组**目的性案例样本**，不是随机样本，也不是独立程序员总体的代表性样本。五个 FastAPI PR 属于同一个项目、同一功能问题簇，提交者均为 FastAPI 项目维护者 tiangolo；pytest 对照样本只有一个 PR，作者为 RonnyPfannschmidt。不能把六个 PR 当成六个独立开发者，更不能据此估计整个行业的发生率。
 
 AI 来源来自 PR 作者的自我披露：使用 Codex、gpt-6-astra，并由作者人工审阅。该披露能够证明作者公开作出了此项声明，不能独立证明 AI 参与了哪些具体代码行，也不能客观衡量人工审阅深度。
 
@@ -55,6 +55,7 @@ AI 来源来自 PR 作者的自我披露：使用 Codex、gpt-6-astra，并由�
 | #16559 | 37f916101f36c4ed4faee1004d07a818c1330d63 | 6b1599a09f3ecb1a7fb90a37ed5d8a0d2763c212 | 2d1851f35da7025273b51fc3aa3deb88839a6a33 |
 | #16560 | b2ce629ace6bdd152d577e5f5e256a079ac1e4fd | 3f9495882ebf29c25bb1c014d7e7cac4a9570669 | 89317c7003d0cca25e56b5acbfc11aa2c1810e08 |
 | #16564 | 3b39c91cd1f221042313634db901c64615bb4fb5 | 3d92fbb407ca10c1e58f44ef13c53888a94aaaf8 | 1282e9a9f1ac0647cb2031c6dd9c1d5631ade4d4 |
+| pytest #15255 | ae37a013763e9c4a143245eda1acdc3c27961685 | 22705a59e6b697edf6242ef96fb3abd933339259 | 082ed70e314ee8e1ab117763d17fe801648f7508 |
 
 ## 4. 最有价值的发现：基线重放已经存在，但并非唯一验证方式
 
