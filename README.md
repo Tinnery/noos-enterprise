@@ -54,6 +54,30 @@ Agent 不是等待指令的工具，而是能够自主探索、调查、构建�
 [查看完整探索文档](explorations/0001-ai-era-software-value/README.md)  
 [查看软件产业分类图谱](explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md)
 
+### Exploration 0002: 信号检测与社区情报系统
+
+**状态**：进行中
+
+**研究问题**：
+- 如何在技术趋势成为主流之前，捕捉到早期的弱信号？
+- 如何从噪声中识别真正有意义的变化？
+- 如何理解和参与技术社区，建立情报网络？
+
+**研究方向**：
+- **弱信号检测**：引用网络异常、低星项目 trending、"放弃叙事"、跨社区重复话题
+- **社区结构分析**：关键人物识别、社区检测、影响力传播路径
+- **实践参与**：从被动监控到主动参与，通过贡献建立信息渠道
+
+**数据源分层**：
+- 学术层（arXiv）→ 开源层（GitHub）→ 社交层（Hacker News）→ 市场层（Crunchbase）
+
+**预期产出**：
+- 信号检测系统原型（Python 脚本套件）
+- 技术社区网络图谱
+- 机会发现报告生成机制
+
+[查看完整探索文档](explorations/0002-signal-detection-community-intelligence/README.md)
+
 ## 公开规范
 
 本仓库是 Public，但用户访谈资料必须脱敏，第三方资料需注明出处，公开发布前需获得授权。详见 [AGENTS.md](AGENTS.md#关于-public-仓库)。
@@ -68,10 +92,16 @@ noos-enterprise/
 ├── LICENSE                      # Apache 2.0 许可证
 ├── dashboard/                   # repo 级探索看板前端（数据模块缺失，当前不可构建）
 ├── explorations/                # 探索任务
-│   └── 0001-ai-era-software-value/
-│       ├── README.md           # 第一个探索任务
-│       ├── frameworks/        # 分类框架与分析工具
-│       └── hypotheses/         # 产品假设文档（待验证）
+│   ├── 0001-ai-era-software-value/
+│   │   ├── README.md           # 第一个探索任务
+│   │   ├── frameworks/         # 分类框架与分析工具
+│   │   ├── hypotheses/         # 产品假设文档（待验证）
+│   │   └── research/           # 研究资料
+│   └── 0002-signal-detection-community-intelligence/
+│       ├── README.md           # 第二个探索任务
+│       ├── frameworks/         # 信号检测框架
+│       ├── scripts/            # 信号检测脚本套件
+│       └── data/               # 数据存储（运行时生成）
 ├── skills/                      # Agent Skills 目录
 │   ├── README.md               # Skills 说明
 │   └── nuwa-skill/             # 女娲.skill（花叔）
@@ -90,6 +120,7 @@ noos-enterprise/
 
 - **2026-11-09**：仓库初始化
 - **2026-11-10**：启动 Exploration 0001；集成花叔的女娲 skill；许可证更新为 Apache 2.0
+- **2026-11-10**：启动 Exploration 0002 - 信号检测与社区情报系统；设计四层架构（信号检测、社区分析、实践参与、反馈循环）；实现信号检测脚本套件（arXiv/GitHub/Hacker News 数据采集 + 四种弱信号检测算法）
 
 ---
 
