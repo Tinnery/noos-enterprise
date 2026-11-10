@@ -54,7 +54,7 @@ Agent 不是等待指令的工具，而是能够自主探索、调查、构建�
 这三个项目提出了一个值得继续检验的产品形态假设：**软件的一种可能形态，是被 Agent 加载、组合、执行和持续改进的知识资产。** 目前这只是基于公开案例形成的推断，尚未由真实用户使用、专业任务质量或付费行为验证。
 
 [查看完整探索文档](explorations/0001-ai-era-software-value/README.md)  
-[查看软件产业分类图谱](explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md)
+[查看软件产业分类图谱](explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md)（含 Security, Assurance & Trust 横切研究主题）
 
 ### Exploration 0002: 信号检测与社区情报系统
 
@@ -92,13 +92,14 @@ noos-enterprise/
 ├── AGENTS.md                    # Agent 探索规则
 ├── VISION.md                    # 项目愿景和价值原则
 ├── LICENSE                      # Apache 2.0 许可证
-├── dashboard/                   # repo 级探索看板前端（数据模块缺失，当前不可构建）
+├── dashboard/                   # repo 级探索看板前端（静态构建，GitHub Pages 部署）
 ├── explorations/                # 探索任务
 │   ├── 0001-ai-era-software-value/
 │   │   ├── README.md           # 第一个探索任务
 │   │   ├── frameworks/         # 分类框架与分析工具
 │   │   ├── hypotheses/         # 产品假设文档（待验证）
-│   │   └── research/           # 研究资料
+│   │   ├── deep-research/      # 深度研究文档（证伪框架、反事实基线、三角验证等）
+│   │   └── validation/         # 假设验证工具包（用户访谈等）
 │   └── 0002-signal-detection-community-intelligence/
 │       ├── README.md           # 第二个探索任务
 │       ├── frameworks/         # 信号检测框架
@@ -123,6 +124,8 @@ noos-enterprise/
 - **2026-11-09**：仓库初始化
 - **2026-11-10**：启动 Exploration 0001；集成花叔的女娲 skill；许可证更新为 Apache 2.0
 - **2026-11-10**：启动 Exploration 0002 - 信号检测与社区情报系统；设计四层架构（信号检测、社区分析、实践参与、反馈循环）；实现信号检测脚本套件（arXiv/GitHub/Hacker News 数据采集 + 四种弱信号检测算法）
+- **2026-11-10**：分类图谱引入 Security, Assurance & Trust 横切研究主题（七个可信基础方向 + 信任链；核实 NIST NICE 2.2.0 / OWASP ASVS 5.0.0 / ACSC Secure by Design 等引用）；完成检测器测试套件（13 项）并集成 CI
+- **2026-11-10**：新增漏洞研究产业框架（产业关系、上报市场运行规则、合规边界、黑灰产经济作用；核实《网络产品安全漏洞管理规定》《网络安全法》2026 修正文本、CVE CNA Rules 4.2.6、补天/360SRC 平台规则）；图谱第 3 节拆分为漏洞研究产业与软件可信度产业双主题
 
 ---
 

@@ -41,7 +41,8 @@ const explorationGroups: DocumentGroup[] = [
     description: '研究软件价值变化、可证伪产品假设、产业观察标签和验证方式。所有假设仍需现实证据检验。',
     documents: [
       { title: '探索总览', description: '研究问题、阶段记录与当前行动', path: 'explorations/0001-ai-era-software-value/README.md' },
-      { title: '软件产业分类图谱', description: '十类交叉观察标签；不代表互斥市场或市场规模', path: 'explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md' },
+      { title: '软件产业分类图谱', description: '十类交叉观察标签 + Security, Assurance & Trust 横切研究主题；不代表互斥市场或市场规模', path: 'explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md' },
+      { title: '漏洞研究产业框架', description: '漏洞市场参与者、上报规则、合规边界与黑灰产经济作用（研究框架，非行为指导）', path: 'explorations/0001-ai-era-software-value/frameworks/vulnerability-research-industry.md' },
       { title: 'HYP-001 · 小企业 AI 工作流', description: '问题假设与待验证条件', path: 'explorations/0001-ai-era-software-value/hypotheses/HYP-001-small-business-ai-workflow.md' },
       { title: 'HYP-002 · Family OS', description: '家庭协调任务与待验证条件', path: 'explorations/0001-ai-era-software-value/hypotheses/HYP-002-family-os.md' },
       { title: 'HYP-003 · 农业 AI 助手', description: '农业任务与专业边界', path: 'explorations/0001-ai-era-software-value/hypotheses/HYP-003-agriculture-ai-assistant.md' },
