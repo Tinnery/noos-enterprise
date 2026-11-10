@@ -49,7 +49,7 @@ Agent 不是等待指令的工具，而是能够自主探索、调查、构建�
 - **Huashu Design**：把设计师的工作方法变成 Agent 可执行的工作流
 - **达尔文.skill**：把"能力是否变好"变成可验证的循环
 
-这三个项目揭示了一个重要的产品形态转变：**软件的未来形态不一定是人打开、点击、操作的应用，也可以是被 Agent 加载、组合、执行和持续改进的知识资产。**
+这三个项目提出了一个值得继续检验的产品形态假设：**软件的一种可能形态，是被 Agent 加载、组合、执行和持续改进的知识资产。** 目前这只是基于公开案例形成的推断，尚未由真实用户使用、专业任务质量或付费行为验证。
 
 [查看完整探索文档](explorations/0001-ai-era-software-value/README.md)  
 [查看软件产业分类图谱](explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md)
@@ -66,6 +66,7 @@ noos-enterprise/
 ├── AGENTS.md                    # Agent 探索规则
 ├── VISION.md                    # 项目愿景和价值原则
 ├── LICENSE                      # Apache 2.0 许可证
+├── dashboard/                   # repo 级探索看板前端（数据模块缺失，当前不可构建）
 ├── explorations/                # 探索任务
 │   └── 0001-ai-era-software-value/
 │       ├── README.md           # 第一个探索任务
@@ -82,6 +83,8 @@ noos-enterprise/
 ## 当前研究状态
 
 现有五份产品假设尚未获得真实用户行为证据。下一阶段暂停继续扩写假设，优先观察目标用户过去实际完成任务的方式、耗时、替代方案和已发生的支出。任何访谈、招募、个人信息收集或付费活动，都必须先取得 AGENTS.md 要求的人类明确授权。
+
+**看板工程状态**：dashboard/ 已有前端页面代码，但页面导入的 dashboard/src/data 模块未出现在当前 Git tree 中（src/data.ts、src/data/index.ts 和 README 所述 JSON 文件均不存在）。因此当前看板尚不能视为可构建、可运行的交付；需要补齐数据模块并重新执行类型检查与构建。
 
 ## 探索日志
 
