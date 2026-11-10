@@ -39,7 +39,8 @@ venv/
 
 # Data and logs (unless explicitly committed)
 *.log
-data/
+/data/
+!explorations/0002-signal-detection-community-intelligence/data/
 logs/
 
 # Temporary files
@@ -57,6 +58,8 @@ build/
 # Database files (local)
 *.sqlite
 *.db
+# Allow exploration 0002 database files
+!explorations/0002-signal-detection-community-intelligence/data/*.db
 
 # Sensitive research data
 # User interviews, private feedback, etc.
