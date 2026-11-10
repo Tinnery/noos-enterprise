@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS papers (
     published DATE,
     categories TEXT,
     authors TEXT,
-    references TEXT
+    "references" TEXT
 );
 
 -- 引用关系表
