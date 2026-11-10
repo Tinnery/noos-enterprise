@@ -15,6 +15,8 @@ from fetch_github import fetch_and_store_github
 from fetch_hackernews import fetch_and_store_hackernews
 from detect_signals import SignalDetector
 from analyze_community import CommunityAnalyzer
+from track_participation import ParticipationTracker
+from feedback_loop import FeedbackLoop
 
 
 def run_data_collection(days_back=7, skip_github=False, skip_hackernews=False):
@@ -134,6 +136,60 @@ def run_community_analysis():
         analyzer.close()
 
 
+def run_participation_tracking():
+    """运行实践参与追踪（Layer 3）"""
+    print("\n" + "=" * 60)
+    print("阶段 4: 实践参与追踪")
+    print("=" * 60)
+
+    tracker = ParticipationTracker()
+
+    try:
+        report = tracker.run_full_analysis()
+        print(f"\n✓ 参与追踪完成")
+        return report
+    except Exception as e:
+        print(f"✗ 参与追踪失败: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+
+def run_feedback_analysis():
+    """运行反馈循环分析（Layer 4）"""
+    print("\n" + "=" * 60)
+    print("阶段 5: 反馈循环分析")
+    print("=" * 60)
+
+    loop = FeedbackLoop()
+
+    try:
+        results = loop.run_full_analysis()
+
+        # 打印摘要
+        accuracy = results.get("accuracy_metrics", {})
+        lag = results.get("lag_metrics", {})
+        quality = results.get("quality_metrics", {})
+
+        if accuracy:
+            print(f"\n  预测准确性: {accuracy.get('overall_accuracy', 0):.1%}")
+        if lag:
+            avg_lag = lag.get("average_lag_days")
+            if avg_lag is not None:
+                print(f"  平均信息时滞: {avg_lag:.1f} 天")
+        if quality:
+            print(f"  决策成熟度: {quality.get('maturity_level', 'N/A')}")
+
+        return results
+    except Exception as e:
+        print(f"✗ 反馈分析失败: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+    finally:
+        loop.close()
+
+
 def generate_report(signals, output_path=None):
     """
     生成信号检测报告
@@ -245,6 +301,8 @@ def main():
     parser.add_argument("--collection-only", action="store_true", help="仅运行数据采集，不检测信号")
     parser.add_argument("--detection-only", action="store_true", help="仅运行信号检测，不采集数据")
     parser.add_argument("--community-analysis", action="store_true", help="运行社区结构分析（Layer 2）")
+    parser.add_argument("--participation", action="store_true", help="运行实践参与追踪（Layer 3）")
+    parser.add_argument("--feedback", action="store_true", help="运行反馈循环分析（Layer 4）")
     parser.add_argument("--no-report", action="store_true", help="不生成报告")
     
     args = parser.parse_args()
@@ -255,8 +313,11 @@ def main():
     print(f"运行时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"参数: {args}")
     
+    # 判断是否运行高级分析（Layer 2/3/4）
+    run_advanced = args.community_analysis or args.participation or args.feedback
+    
     # 1. 数据采集
-    if not args.detection_only and not args.community_analysis:
+    if not args.detection_only and not run_advanced:
         run_data_collection(
             days_back=args.days,
             skip_github=args.skip_github,
@@ -264,7 +325,7 @@ def main():
         )
     
     # 2. 信号检测
-    if not args.collection_only and not args.community_analysis:
+    if not args.collection_only and not run_advanced:
         signals = run_signal_detection()
         
         # 3. 生成报告
@@ -281,6 +342,18 @@ def main():
         if community_report:
             print(f"\n✓ 社区分析完成")
             print(f"  报告位置: {community_report}")
+    
+    # 5. 实践参与追踪（Layer 3）
+    if args.participation:
+        participation_report = run_participation_tracking()
+        if participation_report:
+            print(f"\n✓ 参与追踪完成")
+    
+    # 6. 反馈循环分析（Layer 4）
+    if args.feedback:
+        feedback_results = run_feedback_analysis()
+        if feedback_results:
+            print(f"\n✓ 反馈分析完成")
 
 
 if __name__ == "__main__":
