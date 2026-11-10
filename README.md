@@ -38,11 +38,11 @@ Agent 不是等待指令的工具，而是能够自主探索、调查、构建�
 - 消费者和企业对 AI 软件的信任如何建立？
 - 哪些人群可能被技术进步遗漏？
 
-**研究发现**：
-- 软件竞争优势可能从代码转向工作流、专有数据、集成和信任
+**当前研究判断（尚待真实用户检验）**：
+- 软件价值可能更多依赖工作流、专有数据、集成和信任，而不仅是代码
 - Agent 可能改变传统 SaaS 的使用和收费方式
 - Agent 的自主性增加了透明度、授权边界和问责机制的需求
-- AI 使用在不同规模企业和人群间存在差距
+- AI 使用在不同规模企业和人群间存在差异；宏观采用差异不能代替具体产品需求证据
 
 **第一个研究案例**：花叔的三个项目
 - **女娲.skill**：把人的思维方式变成 Agent 可调用的结构
@@ -51,7 +51,8 @@ Agent 不是等待指令的工具，而是能够自主探索、调查、构建�
 
 这三个项目揭示了一个重要的产品形态转变：**软件的未来形态不一定是人打开、点击、操作的应用，也可以是被 Agent 加载、组合、执行和持续改进的知识资产。**
 
-[查看完整探索文档](explorations/0001-ai-era-software-value/README.md)
+[查看完整探索文档](explorations/0001-ai-era-software-value/README.md)  
+[查看软件产业分类图谱](explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md)
 
 ## 公开规范
 
@@ -68,9 +69,8 @@ noos-enterprise/
 ├── explorations/                # 探索任务
 │   └── 0001-ai-era-software-value/
 │       ├── README.md           # 第一个探索任务
-│       ├── frameworks/         # 分类框架与分析工具
-│       ├── hypotheses/         # 产品假设文档
-│       └── research/           # 研究资料
+│       ├── frameworks/        # 分类框架与分析工具
+│       └── hypotheses/        # 产品假设文档（待验证）
 ├── skills/                      # Agent Skills 目录
 │   ├── README.md               # Skills 说明
 │   └── nuwa-skill/             # 女娲.skill（花叔）
@@ -78,6 +78,10 @@ noos-enterprise/
     ├── hypothesis-template.md   # 机会假设模板
     └── experiment-template.md   # 实验记录模板
 ```
+
+## 当前研究状态
+
+现有五份产品假设尚未获得真实用户行为证据。下一阶段暂停继续扩写假设，优先观察目标用户过去实际完成任务的方式、耗时、替代方案和已发生的支出。任何访谈、招募、个人信息收集或付费活动，都必须先取得 AGENTS.md 要求的人类明确授权。
 
 ## 探索日志
 
