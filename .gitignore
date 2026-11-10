@@ -63,3 +63,6 @@ build/
 private/
 sensitive/
 *-private.md
+
+# WorkBuddy system files
+.workbuddy/
