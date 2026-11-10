@@ -1,12 +1,14 @@
 """
-信号检测器最小可复现测试
+信号检测器测试套件
 
-为每个检测器提供独立的测试用例，验证核心逻辑的正确性。
+为每个检测器提供正向（应检测到）、负向（不应误报）和边界条件测试。
+运行: python test_detectors.py
 """
 
 import sqlite3
 import json
 import tempfile
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
 import sys
@@ -17,236 +19,523 @@ from detect_signals import SignalDetector
 from config import DB_SCHEMA
 
 
+# ── 工具函数 ─────────────────────────────────────────────────────────
+
 def create_test_db():
-    """创建测试数据库"""
+    """创建临时测试数据库"""
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".db")
     db_path = temp_file.name
     temp_file.close()
-    
+
     conn = sqlite3.connect(db_path)
     conn.executescript(DB_SCHEMA)
     conn.close()
-    
+
     return db_path
 
 
-def test_citation_anomaly_detector():
-    """测试引用网络异常检测器"""
-    print("\n=== 测试 1: 引用网络异常检测器 ===")
-    
-    db_path = create_test_db()
-    detector = SignalDetector(db_path)
-    
-    # 插入测试数据
-    now = datetime.now()
-    
-    # 插入论文
-    papers = [
-        {
-            "id": "paper1",
-            "title": "Test Paper 1",
-            "abstract": "Abstract 1",
-            "published": now.isoformat(),
-            "categories": ["cs.AI", "cs.LG"],
-            "authors": ["Author 1"],
-            "references": [],
-        },
-        {
-            "id": "paper2",
-            "title": "Test Paper 2",
-            "abstract": "Abstract 2",
-            "published": now.isoformat(),
-            "categories": ["cs.CV"],
-            "authors": ["Author 2"],
-            "references": [],
-        },
-    ]
-    
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    
-    for paper in papers:
-        cursor.execute("""
-            INSERT INTO papers (id, title, abstract, published, categories, authors, "references")
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (
-            paper["id"],
-            paper["title"],
-            paper["abstract"],
-            paper["published"],
-            json.dumps(paper["categories"]),
-            json.dumps(paper["authors"]),
-            json.dumps(paper["references"]),
-        ))
-    
-    conn.commit()
-    conn.close()
-    
-    # 测试：citations 表为空时应该返回空结果
-    results = detector.detect_citation_anomalies()
-    assert len(results) == 0, "citations 表为空时应返回空结果"
-    print("✓ 测试通过：citations 表为空时正确返回空结果")
-    
-    detector.close()
-    Path(db_path).unlink()
+def cleanup_db(db_path):
+    """安全清理测试数据库"""
+    try:
+        Path(db_path).unlink()
+    except OSError:
+        pass
 
 
-def test_github_trending_detector():
-    """测试 GitHub trending 检测器"""
-    print("\n=== 测试 2: GitHub trending 检测器 ===")
-    
-    db_path = create_test_db()
-    detector = SignalDetector(db_path)
-    
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    
-    # 插入测试项目
-    cursor.execute("""
-        INSERT INTO github_repos (repo, description, language, stars, forks, created_at, updated_at, topics)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, ("test/repo", "Test repo", "Python", 50, 10, datetime.now().isoformat(), datetime.now().isoformat(), json.dumps(["test"])))
-    
-    # 插入 star 历史（每日新增数）
-    # 60 天数据：前 53 天每天 1 star，后 7 天每天 100 star
-    # mean≈12.55, std≈31.79, recent=100, z≈2.75 > 2.0 ✓
-    now = datetime.now()
-    for i in range(60):
-        date = (now - timedelta(days=60-i)).strftime("%Y-%m-%d")
-        daily_stars = 100 if i >= 53 else 1
-        cursor.execute("""
-            INSERT INTO star_history (repo, date, stars)
-            VALUES (?, ?, ?)
-        """, ("test/repo", date, daily_stars))
-    
-    conn.commit()
-    conn.close()
-    
-    # 测试：应该能正确识别异常增长
-    results = detector.detect_github_trending()
-    
-    # 验证：最近 3 天平均增长 5，历史平均约 1.9，应该有显著增长
-    if results:
-        print(f"✓ 检测到 {len(results)} 个 trending 项目")
-        for r in results:
-            print(f"  - {r['repo']}: 最近增长 {r['recent_growth']:.2f}, Z-score {r['z_score']:.2f}")
-    else:
-        print("⚠ 未检测到 trending（可能因为数据量不足或阈值过高）")
-    
-    detector.close()
-    Path(db_path).unlink()
+# ── 引用网络异常检测器 ────────────────────────────────────────────────
+
+class TestCitationAnomaly:
+    """
+    检测逻辑：
+    - 获取最近 7 天的引用关系
+    - 对被引用论文，统计引用来源的类别多样性
+    - 阈值：min_citations=3, min_categories=3, anomaly_score>=10
+    - anomaly_score = citing_count × category_count
+    """
+
+    def test_positive(self):
+        """正向：被 4 个不同领域引用 → 应检测到"""
+        db_path = create_test_db()
+        try:
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            now = datetime.now()
+
+            # 被引用论文（不需要满足日期条件，但必须在 papers 表中存在）
+            c.execute(
+                "INSERT INTO papers VALUES (?,?,?,?,?,?,?)",
+                ("target", "Cross-Domain Survey", "Abstract",
+                 (now - timedelta(days=30)).isoformat(),
+                 json.dumps(["cs.AI"]), json.dumps(["Author"]), json.dumps([])))
+
+            # 4 篇引用论文，分别来自 4 个不同领域（均在 7 天内）
+            citing_papers = [
+                ("c1", "cs.LG", "ML paper"),
+                ("c2", "cs.CV", "Vision paper"),
+                ("c3", "cs.CL", "NLP paper"),
+                ("c4", "cs.RO", "Robotics paper"),
+            ]
+            for pid, cat, title in citing_papers:
+                c.execute(
+                    "INSERT INTO papers VALUES (?,?,?,?,?,?,?)",
+                    (pid, title, "Abstract", now.isoformat(),
+                     json.dumps([cat]), json.dumps(["Author"]), json.dumps([])))
+                c.execute(
+                    "INSERT INTO citations VALUES (?,?)",
+                    (pid, "target"))
+
+            conn.commit()
+            conn.close()
+
+            detector = SignalDetector(db_path)
+            results = detector.detect_citation_anomalies()
+            detector.close()
+
+            assert len(results) == 1, f"应检测到 1 个异常，实际 {len(results)}"
+            assert results[0]["paper_id"] == "target"
+            assert results[0]["citation_count"] >= 4
+            # score = 4 papers × 4 categories = 16
+            assert results[0]["anomaly_score"] >= 10
+            assert 0 <= results[0]["confidence"] <= 1
+            print("  ✓ 正向测试通过：跨领域引用被正确检测")
+        finally:
+            cleanup_db(db_path)
+
+    def test_negative(self):
+        """负向：仅被 2 个领域引用 → 不应检测到"""
+        db_path = create_test_db()
+        try:
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            now = datetime.now()
+
+            c.execute(
+                "INSERT INTO papers VALUES (?,?,?,?,?,?,?)",
+                ("target2", "Narrow Paper", "Abstract",
+                 now.isoformat(), json.dumps(["cs.AI"]),
+                 json.dumps(["Author"]), json.dumps([])))
+
+            # 4 篇引用论文，但只来自 2 个领域
+            for pid, cat in [("c1", "cs.AI"), ("c2", "cs.AI"),
+                             ("c3", "cs.LG"), ("c4", "cs.LG")]:
+                c.execute(
+                    "INSERT INTO papers VALUES (?,?,?,?,?,?,?)",
+                    (pid, f"Paper {pid}", "Abstract", now.isoformat(),
+                     json.dumps([cat]), json.dumps(["Author"]), json.dumps([])))
+                c.execute(
+                    "INSERT INTO citations VALUES (?,?)",
+                    (pid, "target2"))
+
+            conn.commit()
+            conn.close()
+
+            detector = SignalDetector(db_path)
+            results = detector.detect_citation_anomalies()
+            detector.close()
+
+            # categories={cs.AI, cs.LG} → len=2 < min_categories(3) → 不检测
+            assert len(results) == 0, f"不应检测到异常，实际 {len(results)}"
+            print("  ✓ 负向测试通过：同类别引用未误报")
+        finally:
+            cleanup_db(db_path)
+
+    def test_empty_citations(self):
+        """边界：citations 表为空 → 返回空"""
+        db_path = create_test_db()
+        try:
+            detector = SignalDetector(db_path)
+            results = detector.detect_citation_anomalies()
+            detector.close()
+
+            assert len(results) == 0
+            print("  ✓ 边界测试通过：空 citations 表正确返回空")
+        finally:
+            cleanup_db(db_path)
 
 
-def test_abandonment_narrative_detector():
-    """测试放弃叙事检测器"""
-    print("\n=== 测试 3: 放弃叙事检测器 ===")
-    
-    db_path = create_test_db()
-    detector = SignalDetector(db_path)
-    
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    
-    # 插入测试评论（使用 Unix 时间戳）
-    now_timestamp = int(datetime.now().timestamp())
-    
-    comments = [
-        "I migrated from WordPress to Ghost and it's much better",
-        "Switched from WordPress to static site generator",
-        "We abandoned WordPress after years of using it",
-        "Looking for WordPress alternatives",
-        "Moved away from WordPress recently",
-    ]
-    
-    for i, text in enumerate(comments):
-        cursor.execute("""
-            INSERT INTO hn_comments (id, story_id, author, time, text, parent)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (i + 1, i + 1, f"user{i}", now_timestamp - i * 3600, text, 0))
-    
-    conn.commit()
-    conn.close()
-    
-    # 测试：应该能检测到 WordPress 相关的放弃叙事
-    results = detector.detect_abandonment_narratives()
-    
-    assert len(results) > 0, "应该检测到放弃叙事"
-    assert any(r["tool"].lower() == "wordpress" for r in results), "应该检测到 WordPress"
-    
-    print(f"✓ 检测到 {len(results)} 个放弃叙事")
-    for r in results:
-        print(f"  - {r['tool']}: 提及 {r['frequency']} 次")
-    
-    detector.close()
-    Path(db_path).unlink()
+# ── GitHub Trending 检测器 ────────────────────────────────────────────
+
+class TestGitHubTrending:
+    """
+    检测逻辑：
+    - 筛选 stars 在 [10, 100] 范围的 repo
+    - 需要 ≥14 天 star 历史（7 天近期 + 7 天历史基准）
+    - 历史基准排除最近 7 天，避免异常值污染
+    - Z-score = (recent_mean - historical_mean) / historical_std
+    - 阈值：z_score > 2.0 且 recent_growth >= 5
+    """
+
+    def test_positive(self):
+        """正向：最近 7 天异常增长（历史 mean≈2, recent=100）"""
+        db_path = create_test_db()
+        try:
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            now = datetime.now()
+
+            c.execute(
+                "INSERT INTO github_repos VALUES (?,?,?,?,?,?,?,?)",
+                ("test/hot", "Hot repo", "Python", 50, 10,
+                 now.isoformat(), now.isoformat(), json.dumps(["test"])))
+
+            # 60 天数据：前 53 天 daily 1-3（有波动），后 7 天 daily 100
+            for i in range(60):
+                date = (now - timedelta(days=60 - i)).strftime("%Y-%m-%d")
+                daily = 100 if i >= 53 else (i % 3) + 1
+                c.execute(
+                    "INSERT INTO star_history VALUES (?,?,?)",
+                    ("test/hot", date, daily))
+
+            conn.commit()
+            conn.close()
+
+            detector = SignalDetector(db_path)
+            results = detector.detect_github_trending()
+            detector.close()
+
+            assert len(results) >= 1, "应检测到异常增长"
+            repo = next(r for r in results if r["repo"] == "test/hot")
+            assert repo["z_score"] > 2.0, f"Z-score 应 > 2.0，实际 {repo['z_score']:.2f}"
+            assert repo["recent_growth"] >= 5
+            print(f"  ✓ 正向测试通过：Z-score={repo['z_score']:.2f}")
+        finally:
+            cleanup_db(db_path)
+
+    def test_negative(self):
+        """负向：稳定增长（历史 mean≈2, recent≈2）→ 不应检测到"""
+        db_path = create_test_db()
+        try:
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            now = datetime.now()
+
+            c.execute(
+                "INSERT INTO github_repos VALUES (?,?,?,?,?,?,?,?)",
+                ("test/stable", "Stable repo", "Python", 50, 10,
+                 now.isoformat(), now.isoformat(), json.dumps(["test"])))
+
+            # 60 天稳定增长：1, 3, 1, 3... → mean≈2 全程一致
+            for i in range(60):
+                date = (now - timedelta(days=60 - i)).strftime("%Y-%m-%d")
+                daily = 1 if i % 2 == 0 else 3
+                c.execute(
+                    "INSERT INTO star_history VALUES (?,?,?)",
+                    ("test/stable", date, daily))
+
+            conn.commit()
+            conn.close()
+
+            detector = SignalDetector(db_path)
+            results = detector.detect_github_trending()
+            detector.close()
+
+            # recent_mean ≈ historical_mean → z_score ≈ 0 < 2.0
+            assert not any(r["repo"] == "test/stable" for r in results), \
+                "稳定增长不应被检测为 trending"
+            print("  ✓ 负向测试通过：稳定增长未误报")
+        finally:
+            cleanup_db(db_path)
+
+    def test_boundary_enough_history(self):
+        """边界：恰好 14 天历史（7 天基准 + 7 天近期）→ 应正常检测"""
+        db_path = create_test_db()
+        try:
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            now = datetime.now()
+
+            c.execute(
+                "INSERT INTO github_repos VALUES (?,?,?,?,?,?,?,?)",
+                ("test/boundary14", "Boundary", "Python", 50, 10,
+                 now.isoformat(), now.isoformat(), json.dumps(["test"])))
+
+            # 恰好 14 天：前 7 天 daily 1-2，后 7 天 daily 50
+            for i in range(14):
+                date = (now - timedelta(days=14 - i)).strftime("%Y-%m-%d")
+                daily = 50 if i >= 7 else (i % 2) + 1
+                c.execute(
+                    "INSERT INTO star_history VALUES (?,?,?)",
+                    ("test/boundary14", date, daily))
+
+            conn.commit()
+            conn.close()
+
+            detector = SignalDetector(db_path)
+            results = detector.detect_github_trending()
+            detector.close()
+
+            assert any(r["repo"] == "test/boundary14" for r in results), \
+                "14 天数据应能正常检测"
+            print("  ✓ 边界测试通过：14 天数据正常检测")
+        finally:
+            cleanup_db(db_path)
+
+    def test_boundary_insufficient_history(self):
+        """边界：仅 13 天历史（6 天基准）→ 应跳过"""
+        db_path = create_test_db()
+        try:
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            now = datetime.now()
+
+            c.execute(
+                "INSERT INTO github_repos VALUES (?,?,?,?,?,?,?,?)",
+                ("test/short", "Short history", "Python", 50, 10,
+                 now.isoformat(), now.isoformat(), json.dumps(["test"])))
+
+            # 仅 13 天：historical_data = 13-7 = 6 天 < 7 天最低要求
+            for i in range(13):
+                date = (now - timedelta(days=13 - i)).strftime("%Y-%m-%d")
+                daily = 50 if i >= 6 else (i % 2) + 1
+                c.execute(
+                    "INSERT INTO star_history VALUES (?,?,?)",
+                    ("test/short", date, daily))
+
+            conn.commit()
+            conn.close()
+
+            detector = SignalDetector(db_path)
+            results = detector.detect_github_trending()
+            detector.close()
+
+            assert not any(r["repo"] == "test/short" for r in results), \
+                "历史不足 7 天应被跳过"
+            print("  ✓ 边界测试通过：历史不足 7 天正确跳过")
+        finally:
+            cleanup_db(db_path)
 
 
-def test_recurring_topic_detector():
-    """测试跨社区重复话题检测器"""
-    print("\n=== 测试 4: 跨社区重复话题检测器 ===")
-    
-    db_path = create_test_db()
-    detector = SignalDetector(db_path)
-    
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    
-    # 插入 HN 帖子
-    now_date = datetime.now().strftime("%Y-%m-%d")
-    for i in range(5):
-        cursor.execute("""
-            INSERT INTO hn_stories (id, title, url, score, author, time, descendants, detected_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (100 + i, f"AI machine learning story {i}", f"https://example.com/{i}", 50, f"user{i}", int(datetime.now().timestamp()), 10, now_date))
-    
-    # 插入 GitHub 项目
-    for i in range(5):
-        cursor.execute("""
-            INSERT INTO github_repos (repo, description, language, stars, forks, created_at, updated_at, topics)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (f"gh/repo{i}", f"AI machine learning repo {i}", "Python", 50, 10, now_date, now_date, json.dumps(["ai"])))
-    
-    conn.commit()
-    conn.close()
-    
-    # 测试：应该能检测到跨社区的共同话题
-    results = detector.detect_recurring_topics()
-    
-    if results:
-        print(f"✓ 检测到 {len(results)} 个跨社区重复话题")
-        for r in results[:5]:  # 只显示前 5 个
-            print(f"  - {r['topic']}: 出现在 {', '.join(r['communities'])}，共 {r['occurrences']} 次")
-    else:
-        print("⚠ 未检测到跨社区重复话题（可能因为关键词提取不够或阈值过高）")
-    
-    detector.close()
-    Path(db_path).unlink()
+# ── 放弃叙事检测器 ────────────────────────────────────────────────────
 
+class TestAbandonmentNarrative:
+    """
+    检测逻辑：
+    - 正则匹配"放弃/迁移/替代"类模式，提取工具名
+    - 阈值：min_mentions=3
+    - 支持直接传入 texts 或从 DB 查询
+    """
+
+    def test_positive(self):
+        """正向：5 条文本提到放弃 WordPress → 应检测到"""
+        db_path = create_test_db()
+        try:
+            detector = SignalDetector(db_path)
+
+            texts = [
+                "I migrate from WordPress to Ghost",
+                "Switched from WordPress to static site",
+                "We abandon WordPress after years",
+                "Looking for WordPress alternative",
+                "Moved away from WordPress recently",
+            ]
+            results = detector.detect_abandonment_narratives(texts=texts)
+            detector.close()
+
+            assert len(results) > 0, "应检测到放弃叙事"
+            wp = next((r for r in results if r["tool"].lower() == "wordpress"), None)
+            assert wp is not None, f"应检测到 WordPress，实际检测到: {[r['tool'] for r in results]}"
+            assert wp["frequency"] >= 5
+            assert 0 <= wp["confidence"] <= 1
+            print(f"  ✓ 正向测试通过：WordPress frequency={wp['frequency']}")
+        finally:
+            cleanup_db(db_path)
+
+    def test_negative(self):
+        """负向：中性技术讨论 → 不应误报"""
+        db_path = create_test_db()
+        try:
+            detector = SignalDetector(db_path)
+
+            texts = [
+                "Python is great for data science",
+                "Rust has excellent memory safety",
+                "Go is perfect for microservices",
+                "TypeScript improves JavaScript development",
+            ]
+            results = detector.detect_abandonment_narratives(texts=texts)
+            detector.close()
+
+            assert len(results) == 0, f"中性文本不应触发检测，实际: {results}"
+            print("  ✓ 负向测试通过：中性文本未误报")
+        finally:
+            cleanup_db(db_path)
+
+    def test_boundary_below_threshold(self):
+        """边界：仅 2 次提及（阈值 3）→ 不应检测到"""
+        db_path = create_test_db()
+        try:
+            detector = SignalDetector(db_path)
+
+            texts = [
+                "I migrated from Emacs to Vim",
+                "Switched from Emacs to Neovim",
+                "Rust is great for systems programming",
+                "Python has excellent libraries",
+            ]
+            results = detector.detect_abandonment_narratives(texts=texts)
+            detector.close()
+
+            emacs = next((r for r in results if r["tool"].lower() == "emacs"), None)
+            assert emacs is None, \
+                f"Emacs 仅 2 次提及（< min_mentions 3），不应检测到，实际 frequency={emacs['frequency'] if emacs else 'N/A'}"
+            print("  ✓ 边界测试通过：低于阈值未触发")
+        finally:
+            cleanup_db(db_path)
+
+
+# ── 跨社区重复话题检测器 ──────────────────────────────────────────────
+
+class TestRecurringTopic:
+    """
+    检测逻辑：
+    - 从 HN stories 和 GitHub repos 提取关键词（≥3 字母，非停用词）
+    - 阈值：min_communities=2（出现在两个来源）, min_occurrences=5
+    """
+
+    def test_positive(self):
+        """正向：相同关键词出现在两个社区，总频次 ≥5 → 应检测到"""
+        db_path = create_test_db()
+        try:
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            now_date = datetime.now().strftime("%Y-%m-%d")
+            now_dt = datetime.now().isoformat()
+
+            # HN 帖子：5 条都含 "machine" 和 "learning"
+            for i in range(5):
+                c.execute(
+                    "INSERT INTO hn_stories VALUES (?,?,?,?,?,?,?,?)",
+                    (200 + i, f"machine learning advances {i}",
+                     f"https://example.com/{i}", 50, f"user{i}",
+                     int(datetime.now().timestamp()), 10, now_date))
+
+            # GitHub 项目：5 条都含 "machine" 和 "learning"
+            for i in range(5):
+                c.execute(
+                    "INSERT INTO github_repos VALUES (?,?,?,?,?,?,?,?)",
+                    (f"ml/repo{i}", f"machine learning framework {i}",
+                     "Python", 50, 10, now_dt, now_dt, json.dumps(["ml"])))
+
+            conn.commit()
+            conn.close()
+
+            detector = SignalDetector(db_path)
+            results = detector.detect_recurring_topics()
+            detector.close()
+
+            assert len(results) > 0, "应检测到跨社区重复话题"
+            topics = {r["topic"] for r in results}
+            assert "machine" in topics, f"'machine' 应在检测结果中，实际: {topics}"
+            assert "learning" in topics, f"'learning' 应在检测结果中，实际: {topics}"
+
+            ml_topic = next(r for r in results if r["topic"] == "machine")
+            assert len(ml_topic["communities"]) >= 2
+            assert ml_topic["occurrences"] >= 5
+            print(f"  ✓ 正向测试通过：检测到 {len(results)} 个共同话题")
+        finally:
+            cleanup_db(db_path)
+
+    def test_negative(self):
+        """负向：数据库为空 → 不应检测到"""
+        db_path = create_test_db()
+        try:
+            detector = SignalDetector(db_path)
+            results = detector.detect_recurring_topics()
+            detector.close()
+
+            assert len(results) == 0, "空数据库应返回空结果"
+            print("  ✓ 负向测试通过：空数据库正确返回空")
+        finally:
+            cleanup_db(db_path)
+
+    def test_boundary_below_threshold(self):
+        """边界：关键词出现在两个社区但总频次 <5 → 不应检测到"""
+        db_path = create_test_db()
+        try:
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            now_date = datetime.now().strftime("%Y-%m-%d")
+            now_dt = datetime.now().isoformat()
+
+            # HN：2 条含 "neural" 和 "network"
+            for i in range(2):
+                c.execute(
+                    "INSERT INTO hn_stories VALUES (?,?,?,?,?,?,?,?)",
+                    (300 + i, f"neural network research {i}",
+                     f"https://example.com/{i}", 50, f"user{i}",
+                     int(datetime.now().timestamp()), 10, now_date))
+
+            # GitHub：2 条含 "neural" 和 "network"
+            for i in range(2):
+                c.execute(
+                    "INSERT INTO github_repos VALUES (?,?,?,?,?,?,?,?)",
+                    (f"nn/repo{i}", f"neural network library {i}",
+                     "Python", 50, 10, now_dt, now_dt, json.dumps(["ml"])))
+
+            conn.commit()
+            conn.close()
+
+            detector = SignalDetector(db_path)
+            results = detector.detect_recurring_topics()
+            detector.close()
+
+            # "neural" 总频次 = 2(HN) + 2(GitHub) = 4 < min_occurrences(5)
+            nn_topics = [r for r in results
+                         if r["topic"] in ("neural", "network")]
+            assert len(nn_topics) == 0, \
+                f"频次不足不应被检测，实际: {[r['topic'] for r in nn_topics]}"
+            print("  ✓ 边界测试通过：频次不足未触发")
+        finally:
+            cleanup_db(db_path)
+
+
+# ── 主入口 ────────────────────────────────────────────────────────────
 
 def main():
     """运行所有测试"""
     print("=" * 60)
     print("信号检测器测试套件")
     print("=" * 60)
-    
-    try:
-        test_citation_anomaly_detector()
-        test_github_trending_detector()
-        test_abandonment_narrative_detector()
-        test_recurring_topic_detector()
-        
-        print("\n" + "=" * 60)
-        print("✓ 所有测试完成")
-        print("=" * 60)
-        
-    except AssertionError as e:
-        print(f"\n✗ 测试失败: {e}")
+
+    test_classes = [
+        ("引用网络异常检测器", TestCitationAnomaly),
+        ("GitHub Trending 检测器", TestGitHubTrending),
+        ("放弃叙事检测器", TestAbandonmentNarrative),
+        ("跨社区重复话题检测器", TestRecurringTopic),
+    ]
+
+    passed = 0
+    failed = 0
+
+    for name, cls in test_classes:
+        print(f"\n{'─' * 50}")
+        print(f"  {name}")
+        print(f"{'─' * 50}")
+        instance = cls()
+        for method_name in sorted(dir(instance)):
+            if not method_name.startswith("test_"):
+                continue
+            method = getattr(instance, method_name)
+            label = method_name.replace("test_", "")
+            try:
+                method()
+                passed += 1
+            except AssertionError as e:
+                print(f"  ✗ {label}: {e}")
+                failed += 1
+            except Exception as e:
+                print(f"  ✗ {label}: 异常 - {e}")
+                import traceback
+                traceback.print_exc()
+                failed += 1
+
+    print(f"\n{'=' * 60}")
+    print(f"测试结果: {passed} 通过, {failed} 失败, 共 {passed + failed} 个")
+    print(f"{'=' * 60}")
+
+    if failed > 0:
         sys.exit(1)
-    except Exception as e:
-        print(f"\n✗ 测试出错: {e}")
-        import traceback
-        traceback.print_exc()
-        sys.exit(1)
+    print("✓ 所有测试通过")
 
 
 if __name__ == "__main__":

@@ -11,6 +11,11 @@ on:
       - "VISION.md"
       - "AGENTS.md"
       - ".github/workflows/deploy-pages.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "explorations/0002-signal-detection-community-intelligence/**"
   workflow_dispatch:
 
 permissions:
@@ -21,6 +26,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test-detectors:
+    name: Test Signal Detectors
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy networkx
+
+      - name: Run detector tests
+        working-directory: explorations/0002-signal-detection-community-intelligence/scripts
+        run: python test_detectors.py
+
   build:
     runs-on: ubuntu-latest
     steps:
