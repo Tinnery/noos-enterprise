@@ -172,7 +172,7 @@ def generate_report(signals, output_path=None):
         # 3. 放弃叙事
         if "abandonment_narrative" in signals_by_type:
             f.write("## 3. 放弃叙事\n\n")
-            f.write("这些工具被多次提及"放弃"或"迁移"，可能代表技术衰退信号。\n\n")
+            f.write('这些工具被多次提及"放弃"或"迁移"，可能代表技术衰退信号。\n\n')
             
             for signal in signals_by_type["abandonment_narrative"][:10]:
                 f.write(f"### {signal['tool']}\n\n")
