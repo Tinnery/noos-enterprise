@@ -68,7 +68,9 @@ noos-enterprise/
 ├── explorations/                # 探索任务
 │   └── 0001-ai-era-software-value/
 │       ├── README.md           # 第一个探索任务
-│       └── hypotheses/         # 产品假设文档
+│       ├── frameworks/         # 分类框架与分析工具
+│       ├── hypotheses/         # 产品假设文档
+│       └── research/           # 研究资料
 ├── skills/                      # Agent Skills 目录
 │   ├── README.md               # Skills 说明
 │   └── nuwa-skill/             # 女娲.skill（花叔）
