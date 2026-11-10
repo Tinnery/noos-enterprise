@@ -398,7 +398,7 @@ Small Organization Enablement 和 Accessibility & Inclusion 可能是有价值�
 
 ## 深层研究（Deep Research）
 
-基于深层需求分析文档的要求，对 5 个产品假设进行了系统性的深度研究，产出了 8 个分析框架。所有文档位于 `deep-research/` 目录下。
+基于深层需求分析文档的要求，对 5 个产品假设进行了系统性的深度研究，产出了 8 个分析框架。随后新增 1 份基于公开 PR / CI 原始记录的代码变更可信验证试点。所有文档位于 `deep-research/` 目录下。
 
 ### 交付物清单
 
@@ -412,6 +412,7 @@ Small Organization Enablement 和 Accessibility & Inclusion 可能是有价值�
 | 06 | [利益相关者视角分离](deep-research/06-stakeholder-perspectives.md) | 从最终用户、现有从业者、监管方、生态伙伴 4 个视角分析每个假设 | ✅ 完成 |
 | 07 | [证据升级路径](deep-research/07-evidence-upgrade-path.md) | 为每个假设定义从 L1→L2→L3 的证据升级路径 | ✅ 完成 |
 | 08 | [三角验证框架](deep-research/08-triangulation-framework.md) | 构建定量数据、定性洞察、实验验证三个独立验证维度的整合方法 | ✅ 完成 |
+| 09 | [代码变更可信验证试点](deep-research/09-change-assurance-pilot.md) | 复核 FastAPI 5 个明确披露 Codex 辅助的 PR，检查 base 重放、测试失败归因和 CI 证据边界 | 🟡 Pilot 完成；跨仓库验证中 |
 
 ### 关键发现摘要
 
@@ -635,6 +636,29 @@ HYP-002 至 HYP-005 暂时保持待验证状态，不并行招募五组用户。
 - 等待用户决策：是否开始证据升级行动
 - 如果开始，优先执行 HYP-005 和 HYP-001 的用户访谈和竞品分析
 - 建立领先指标监控系统，持续跟踪市场信号
+
+---
+
+### 2026-11-10（续五）— 代码变更可信验证实证试点
+
+**完成**：
+- 对 FastAPI 5 个公开 PR 做小规模试点，全部在 PR 正文明确披露 Codex 辅助和人工审阅
+- 固定并记录 base / head / merge SHA、改动文件、PR 地址与 Actions 原始 Job
+- 复核 3 个 PR 的基线行为测试失败（6、26、9 项），并复核 PR 版本测试通过记录
+- 发现 FastAPI 已具备 changed-tests-on-base 机制；初始“重跑新增测试”产品切口不具备足够差异化
+- 发现该机制仍存在文件级测试归因、任意非零退出码分类、无测试变更和需求追踪等验证边界
+- 将完整样本、工作流源码、判定规则、限制和下一轮方案写入 deep-research/09-change-assurance-pilot.md
+
+**学习**：
+- CI Job 绿色不等于验证证据有效，必须读取原始日志并区分行为断言失败、snapshot 交互异常和环境错误
+- 成熟项目已经实现部分 red-on-base / green-on-head，不能把基础回归重放包装成新产品
+- 一个项目的 5 个相关 PR 不能代表个人程序员总体，更不能证明商业需求
+- 下一步研究重点应是验证证据的归因和完整性，而非再造测试执行平台
+
+**决策**：
+- 继续跨仓库实证研究，扩大至不同规模项目和个人维护者
+- 暂不开发 CLI、GitHub Action 或 SaaS 产品
+- 用户行为、人工时间成本和付费意愿仍未验证；任何外部联系前遵守 AGENTS.md 授权要求
 
 ---
 
