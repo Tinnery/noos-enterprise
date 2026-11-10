@@ -63,7 +63,7 @@ const explorationGroups: DocumentGroup[] = [
       { title: '利益相关者视角', description: '不同参与方的激励和约束', path: 'explorations/0001-ai-era-software-value/deep-research/06-stakeholder-perspectives.md' },
       { title: '证据升级路径', description: '证据采集与质量提升的研究设计', path: 'explorations/0001-ai-era-software-value/deep-research/07-evidence-upgrade-path.md' },
       { title: '三角验证框架', description: '多来源交叉检验方法', path: 'explorations/0001-ai-era-software-value/deep-research/08-triangulation-framework.md' },
-      { title: '代码变更可信验证试点', description: 'FastAPI 公开 PR 原始证据；基线重放、失败归因和 CI 机制边界（Pilot，非市场结论）', path: 'explorations/0001-ai-era-software-value/deep-research/09-change-assurance-pilot.md' },
+      { title: '代码变更可信验证试点', description: 'FastAPI + pytest 公开 PR 对照；基线重放、结构性测试、失败归因和 CI 证据边界（Pilot，非市场结论）', path: 'explorations/0001-ai-era-software-value/deep-research/09-change-assurance-pilot.md' },
       { title: 'HYP-001 验证工具包', description: '小企业工作任务观察与验证计划', path: 'explorations/0001-ai-era-software-value/validation/hyp-001-toolkit.md' },
       { title: 'HYP-005 验证工具包', description: '维修场景研究与专业边界', path: 'explorations/0001-ai-era-software-value/validation/hyp-005-toolkit.md' },
       { title: 'Opportunity Brief 模板', description: '把技术信号转为具体角色、任务、当前替代方案、成本与反证', path: 'templates/opportunity-brief-template.md' },
