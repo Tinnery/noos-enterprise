@@ -627,6 +627,52 @@ HYP-002 至 HYP-005 暂时保持待验证状态，不并行招募五组用户。
 
 ---
 
+### 2026-11-10（续五）— 需求兑现方法论落地
+
+**完成**：
+- 创建 `frameworks/demand-fulfillment-methodology.md`：需求兑现方法论框架（哲学基础 + JTBD/ODI/Revealed Preference 三大方法论 + 验证标准 + 研究诚实性声明）
+  - 第 0 节：为什么需要这套方法论（从斯密-乔布斯连接到可操作方法）
+  - 第 1 节：哲学基础（需求兑现作为财富创造的核心机制），明确标注为框架性假设
+  - 第 2 节：Jobs-to-be-Done 方法论（Job Map 八步骤、Switch Interview Protocol、原始数据类型表）
+  - 第 3 节：Outcome-Driven Innovation 方法论（Opportunity Algorithm、Desired Outcome Statements、市场机会分类）
+  - 第 4 节：Revealed Preference 方法论（Switch Events 分析、补偿行为识别）
+  - 第 5 节：验证标准（可预测性、可复现性、收敛效度、反事实检验）
+  - 第 6 节：与现有研究框架的交叉引用（software-landscape-taxonomy.md、06-stakeholder-perspectives.md、vulnerability-research-industry.md）
+  - 第 7 节：研究诚实性声明（已核实研究基础表、待验证推论、方法论边界）
+  - 第 8 节：下一步研究方向
+- 创建 `deep-research/09-demand-validation.md`：AI Agent 场景的需求验证研究工具包
+  - 第 1 节：AI Agent 的 Job Map 模板（通用模板 + 两个具体场景示例：预订餐厅、编写代码）
+  - 第 2 节：Switch Interview Protocol（AI Agent 版本，含招募标准、四阶段访谈大纲、数据记录模板）
+  - 第 3 节：Opportunity Algorithm（AI Agent 版本，含问卷设计、计算方法、样本量要求、统计检验）
+  - 第 4 节：验证标准与外部基准（可预测性、可复现性、收敛效度、反事实检验的具体验证方法）
+  - 第 5 节：与 HYP-001~005 的连接（针对每个假设提供 Job Map 应用、Opportunity 预测、验证方法）
+  - 第 6 节：研究诚实性声明
+  - 第 7 节：下一步行动（6 个具体步骤）
+- 更新 `AGENTS.md`：在"研究方法"部分补充行为观察操作定义和验证标准
+  - 新增"行为观察的操作定义"小节：Switch Events、Compensating Behaviors、Abandonment Points 的具体观察指标和数据来源
+  - 新增"验证标准"小节：可预测性、可复现性、收敛效度、反事实检验的基准和外部数据来源
+  - 新增"方法论边界"小节：JTBD/ODI 的适用范围和限制
+
+**学习**：
+- 需求兑现方法论从哲学讨论（斯密-乔布斯连接）落地为可操作方法（JTBD/ODI/Revealed Preference），关键在于区分"已核实研究基础"与"待验证推论"
+- Switch Interview Protocol 的核心是追溯具体事件（"第一次购买时刻""最后一次使用旧方案时刻"），而非一般态度（"你觉得这个产品怎么样"）
+- Opportunity Algorithm 的价值在于把"重要性"和"满意度"的差距量化为可比较的机会得分，而非依赖主观判断
+- 验证标准（可预测性、可复现性、收敛效度、反事实检验）是独立于方法论本身的元标准，用于检验方法论是否真的有效
+- 研究诚实性要求明确标注：哪些是 Christensen/Ulwick/Samuelson 的已发表研究，哪些是 Agent 生成的分析假设
+
+**关键决策点**：
+- 是否使用 Switch Interview Protocol 对 HYP-001（小企业 AI 工作流助手）进行首轮访谈（需要人类授权）
+- 是否使用 Opportunity Algorithm 对 HYP-005（蓝领技能 AI 助手）进行需求测量（需要招募 50+ 样本）
+- 是否建立验证标准的基线数据库（需要收集 Strategizer 数据库、学术研究的 inter-rater reliability 数据）
+
+**下一步**：
+- 获得人类授权后，使用 Switch Interview Protocol 访谈 5-10 个小企业主（HYP-001）
+- 使用 Job Map 模板记录 AI Agent 在真实任务中的八步骤（从 HYP-005 的技工场景开始）
+- 收集首批 Switch Events 数据，建立补偿行为和放弃点的基线
+- 验证 Opportunity Algorithm 的预测效度（需要 6-12 个月的纵向数据）
+
+---
+
 > "The enterprise is a living thing. It's not a machine. It's a community of people working together toward a common goal."
 > 
 > — Gene Roddenberry
