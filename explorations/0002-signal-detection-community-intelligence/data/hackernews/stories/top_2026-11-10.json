@@ -1,0 +1,112 @@
+[
+  {
+    "id": 50429068,
+    "title": "Claude Fable 5.2 and Mythos 5.2",
+    "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+    "score": 364,
+    "descendants": 705,
+    "author": "lairv",
+    "time": 1794247270,
+    "type": "story",
+    "detected_date": "2026-11-10T13:19:58.217441"
+  },
+  {
+    "id": 50431058,
+    "title": "USPS now offers official ZIP Code boundary polygons",
+    "url": "https://postalpro.usps.com/zcb",
+    "score": 562,
+    "descendants": 280,
+    "author": "munro",
+    "time": 1794254339,
+    "type": "story",
+    "detected_date": "2026-11-10T13:19:59.828396"
+  },
+  {
+    "id": 50378118,
+    "title": "How many people work from home?",
+    "url": "https://nicholasdecker.substack.com/p/how-many-people-work-from-home",
+    "score": 28,
+    "descendants": 30,
+    "author": "surprisetalk",
+    "time": 1793880005,
+    "type": "story",
+    "detected_date": "2026-11-10T13:20:01.404856"
+  },
+  {
+    "id": 50427362,
+    "title": "Payments Canada announces launch of Canada's Real-Time Rail (RTR) payment system",
+    "url": "https://www.payments.ca/canada-launches-real-time-rail-bringing-247-payment-infrastructure-national-economy",
+    "score": 496,
+    "descendants": 275,
+    "author": "ocd",
+    "time": 1794240045,
+    "type": "story",
+    "detected_date": "2026-11-10T13:20:02.782052"
+  },
+  {
+    "id": 50429734,
+    "title": "E-means: Outperforming k-means in one-tenth the epochs",
+    "url": "https://e-means.github.io/",
+    "score": 323,
+    "descendants": 29,
+    "author": "porridgeraisin",
+    "time": 1794249943,
+    "type": "story",
+    "detected_date": "2026-11-10T13:20:04.007297"
+  },
+  {
+    "id": 50434264,
+    "title": "Horible public key tricks",
+    "url": "https://maurycyz.com/projects/badcert/",
+    "score": 88,
+    "descendants": 33,
+    "author": "Curiositry",
+    "time": 1794269237,
+    "type": "story",
+    "detected_date": "2026-11-10T13:20:05.509808"
+  },
+  {
+    "id": 50424581,
+    "title": "Foldable Flight: The Best Paper Airplanes",
+    "url": "https://www.foldableflight.com",
+    "score": 912,
+    "descendants": 144,
+    "author": "vismit2000",
+    "time": 1794226762,
+    "type": "story",
+    "detected_date": "2026-11-10T13:20:07.148116"
+  },
+  {
+    "id": 50434310,
+    "title": "Locating the source of a mysterious beep",
+    "url": "https://simonwillison.net/2026/Nov/9/mysterious-beeps/",
+    "score": 77,
+    "descendants": 35,
+    "author": "bigwheels",
+    "time": 1794269446,
+    "type": "story",
+    "detected_date": "2026-11-10T13:20:08.736152"
+  },
+  {
+    "id": 50433541,
+    "title": "Exact – a new cross platform UI framework",
+    "url": "https://github.com/expo/exact",
+    "score": 89,
+    "descendants": 40,
+    "author": "vmg12",
+    "time": 1794265153,
+    "type": "story",
+    "detected_date": "2026-11-10T13:20:09.914950"
+  },
+  {
+    "id": 50435660,
+    "title": "CoreWeave bond yield tops 16% as AI credit stress rises",
+    "url": "https://www.cnbc.com/2026/11/06/coreweave-bond-yield-tops-16percent-as-ai-credit-stress-rises.html",
+    "score": 59,
+    "descendants": 25,
+    "author": "lxm",
+    "time": 1794280806,
+    "type": "story",
+    "detected_date": "2026-11-10T13:20:11.670982"
+  }
+]
