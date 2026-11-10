@@ -106,7 +106,7 @@ PR 正常测试矩阵则在 PR 版本上运行完整测试套件。这构成了�
 
 #### PR #16559
 
-[Regression Job 日志](https://github.com/fastapi/fastapi/actions/runs/395097232?check_suite_focus=true)
+[Regression Job 日志](https://github.com/fastapi/fastapi/actions/runs/39509723184/job/118927451731)
 
 基线重放得到：
 
@@ -119,7 +119,7 @@ PR 正常测试矩阵则在 PR 版本上运行完整测试套件。这构成了�
 
 #### PR #16557
 
-[Regression Job 日志](https://github.com/fastapi/fastapi/actions/runs/395064097?check_suite_focus=true)
+[Regression Job 日志](https://github.com/fastapi/fastapi/actions/runs/39506409538/job/118916329214)
 
 基线重放得到：
 
