@@ -3,7 +3,7 @@
     "title": "AI 时代软件价值 · 软件产业分类图谱与 AI 影响初步估计",
     "exploration": "Exploration 0001",
     "generatedAt": "2026-11-10",
-    "description": "分类图谱为 Step 1（软件分类图谱）成果；AI 影响为初步估计，待 Step 2（AI 影响分析）取证。所有 aiImpact.preliminary 字段均为 true，请勿作为结论使用。"
+    "description": "十类仅表示产品功能与价值角色，不构成完整产业地图；另以独立研究领域和技术分支覆盖 AI & Model Systems、Security & Trust 等横切领域。AI 影响为初步估计，待任务级证据检验；所有 aiImpact.preliminary 字段均为 true，请勿作为结论使用。"
   },
   "categories": [
     {

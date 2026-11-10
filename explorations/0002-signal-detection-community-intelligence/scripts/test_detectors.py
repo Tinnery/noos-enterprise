@@ -16,7 +16,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent))
 
 from detect_signals import SignalDetector
-from config import DB_SCHEMA
+from config import ARXIV_CONFIG, GITHUB_CONFIG, DB_SCHEMA
 
 
 # ── 工具函数 ─────────────────────────────────────────────────────────
@@ -489,6 +489,41 @@ class TestRecurringTopic:
             cleanup_db(db_path)
 
 
+class TestResearchCoverageConfiguration:
+    """配置层覆盖 AI 与相邻软件工程分支，避免采集范围退化为少数 AI 热门标签。"""
+
+    def test_arxiv_categories_cover_ai_and_core_software_fields(self):
+        required = {
+            "cs.AI", "cs.LG", "cs.CL", "cs.CV",
+            "cs.CR", "cs.SE", "cs.DB", "cs.DC", "cs.PL", "cs.IR",
+        }
+        configured = set(ARXIV_CONFIG["categories"])
+        assert required.issubset(configured), (
+            f"arXiv 类别覆盖缺失: {sorted(required - configured)}"
+        )
+        assert len(ARXIV_CONFIG["categories"]) == len(configured), \
+            "arXiv 类别不应重复"
+        assert ARXIV_CONFIG["max_results_per_category"] > 0
+
+    def test_github_topics_cover_ai_security_and_engineering(self):
+        required = {
+            "artificial-intelligence", "ai-agents", "inference", "rag",
+            "llm-evaluation", "cybersecurity", "software-supply-chain",
+            "developer-tools", "data-engineering", "observability",
+        }
+        configured = set(GITHUB_CONFIG["topics"])
+        assert required.issubset(configured), (
+            f"GitHub Topic 覆盖缺失: {sorted(required - configured)}"
+        )
+        assert len(GITHUB_CONFIG["topics"]) == len(configured), \
+            "GitHub Topic 不应重复"
+        assert GITHUB_CONFIG["max_pages_per_topic"] == 1
+        assert GITHUB_CONFIG["max_repos_per_topic"] > 0
+        assert GITHUB_CONFIG["search_delay_seconds"] > 0
+
+
+
+
 # ── 主入口 ────────────────────────────────────────────────────────────
 
 def main():
@@ -502,6 +537,7 @@ def main():
         ("GitHub Trending 检测器", TestGitHubTrending),
         ("放弃叙事检测器", TestAbandonmentNarrative),
         ("跨社区重复话题检测器", TestRecurringTopic),
+        ("研究领域采集配置", TestResearchCoverageConfiguration),
     ]
 
     passed = 0

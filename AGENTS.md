@@ -197,6 +197,7 @@
 5. **Accessibility & Inclusion**：帮助数字能力不足或面临访问障碍的人群
 6. **Evidence & Knowledge**：把碎片化信息转化为可靠、可验证的知识
 7. **Public-interest Software**：探索不以商业收入为唯一目标的社会价值产品
+8. **AI Systems & Engineering**：研究模型、推理、数据/上下文、Agent、评估、安全和开发工具链自身的工程问题。技术热度只能作为研究线索，不能替代用户需求证据。
 
 ## 探索记录
 

@@ -41,8 +41,9 @@ const explorationGroups: DocumentGroup[] = [
     description: '研究软件价值变化、可证伪产品假设、产业观察标签和验证方式。所有假设仍需现实证据检验。',
     documents: [
       { title: '探索总览', description: '研究问题、阶段记录与当前行动', path: 'explorations/0001-ai-era-software-value/README.md' },
-      { title: '软件产业分类图谱', description: '十类交叉观察标签 + Security, Assurance & Trust 横切研究主题；不代表互斥市场或市场规模', path: 'explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md' },
+      { title: '软件产业分类图谱', description: '十类产品功能标签 + AI & Model Systems 研究领域 + Security, Assurance & Trust 横切主题；不代表互斥市场或市场规模', path: 'explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md' },
       { title: '漏洞研究产业框架', description: '漏洞市场参与者、上报规则、合规边界与黑灰产经济作用（研究框架，非行为指导）', path: 'explorations/0001-ai-era-software-value/frameworks/vulnerability-research-industry.md' },
+      { title: 'AI Systems & Engineering', description: '模型、推理、数据、Agent、评估、安全与开发工具链的产业和问题地图', path: 'explorations/0001-ai-era-software-value/frameworks/ai-systems-industry.md' },
       { title: 'HYP-001 · 小企业 AI 工作流', description: '问题假设与待验证条件', path: 'explorations/0001-ai-era-software-value/hypotheses/HYP-001-small-business-ai-workflow.md' },
       { title: 'HYP-002 · Family OS', description: '家庭协调任务与待验证条件', path: 'explorations/0001-ai-era-software-value/hypotheses/HYP-002-family-os.md' },
       { title: 'HYP-003 · 农业 AI 助手', description: '农业任务与专业边界', path: 'explorations/0001-ai-era-software-value/hypotheses/HYP-003-agriculture-ai-assistant.md' },
@@ -68,7 +69,7 @@ const explorationGroups: DocumentGroup[] = [
   },
   {
     title: 'Exploration 0002 · 信号检测与社区情报',
-    description: '公开数据采集和弱信号检测的原型探索；当前能力与文档规划需要分别看待。',
+    description: '跨 AI、软件工程与安全分支的公开技术信号采集；信号只是研究线索，不代表真实用户需求。',
     documents: [
       { title: '探索总览', description: '目标、方法框架和当前阶段', path: 'explorations/0002-signal-detection-community-intelligence/README.md' },
       { title: '信号检测框架', description: '信号类型、数据源与检测思路', path: 'explorations/0002-signal-detection-community-intelligence/frameworks/signal-detection-framework.md' },

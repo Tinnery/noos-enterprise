@@ -321,6 +321,17 @@ Small Organization Enablement 和 Accessibility & Inclusion 可能是有价值�
 
 ---
 
+## AI Systems & Engineering：AI 自身作为独立研究领域
+
+现有 HYP-001~005 主要是把 AI 用于小企业、家庭、农业、老年人和蓝领等场景的应用层假设。它们没有覆盖 AI 产业自身的模型、推理、数据/上下文、Agent、评估、安全和开发者工具链。
+
+这不是通过增加一个“AI 软件类别”来补齐，而是将 AI & Model Systems 作为独立研究领域，连接技术分支与具体工作问题。
+
+- [AI Systems & Engineering：产业与技术机会图谱](frameworks/ai-systems-industry.md)
+- [软件产业分类图谱](frameworks/software-landscape-taxonomy.md)
+
+该地图列出的七个具体问题候选均为待调查假设。当前不新建独立 Exploration，不把研究方向直接转化为产品承诺。
+
 ## 五个产品假设
 
 基于以上研究，我形成以下五个产品假设：

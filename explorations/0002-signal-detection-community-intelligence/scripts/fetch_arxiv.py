@@ -14,56 +14,66 @@ sys.path.insert(0, str(Path(__file__).parent))
 from config import ARXIV_CONFIG, DATA_DIR, DB_PATH
 
 
-def fetch_arxiv_papers(days_back=7, max_results=None):
+def fetch_arxiv_papers(days_back=7, max_results_per_category=None):
     """
-    获取 arXiv 论文
-    
+    按 arXiv 类别独立采样，减少 AI 大类对其他软件技术分支的覆盖挤压。
+
     Args:
         days_back: 获取最近多少天的论文
-        max_results: 最大结果数（None 表示使用配置值）
-    
+        max_results_per_category: 每个类别的最大结果数（None 表示使用配置值）
+
     Returns:
-        list of dict: 论文列表
+        list of dict: 去重后的论文列表
     """
-    if max_results is None:
-        max_results = ARXIV_CONFIG["max_results"]
-    
-    # 构建查询
-    categories = " OR ".join([f"cat:{cat}" for cat in ARXIV_CONFIG["categories"]])
-    
-    # 搜索论文
-    search = arxiv.Search(
-        query=categories,
-        max_results=max_results,
-        sort_by=arxiv.SortCriterion.SubmittedDate,
-        sort_order=arxiv.SortOrder.Descending
-    )
-    
-    papers = []
+    if max_results_per_category is None:
+        max_results_per_category = ARXIV_CONFIG["max_results_per_category"]
+
     cutoff_date = datetime.now() - timedelta(days=days_back)
-    
-    print(f"正在获取 arXiv 论文（最近 {days_back} 天）...")
-    
-    # arxiv 4.x API: 使用 Client 执行搜索
+    print(
+        f"正在获取 arXiv 论文（最近 {days_back} 天，"
+        f"{len(ARXIV_CONFIG['categories'])} 个类别，每类最多 {max_results_per_category} 篇）..."
+    )
+
     client = arxiv.Client()
-    for result in client.results(search):
-        # 检查日期
-        if result.published.replace(tzinfo=None) < cutoff_date:
-            continue
-        
-        paper = {
-            "id": result.entry_id.split("/")[-1],
-            "title": result.title,
-            "abstract": result.summary,
-            "published": result.published.isoformat(),
-            "categories": result.categories,
-            "authors": [author.name for author in result.authors],
-            "references": [],  # arXiv API 不直接提供引用列表，需要额外数据源（如 Semantic Scholar API）
-            "pdf_url": result.pdf_url,
-        }
-        papers.append(paper)
-    
-    print(f"✓ 获取到 {len(papers)} 篇论文")
+    papers_by_id = {}
+
+    for category in ARXIV_CONFIG["categories"]:
+        search = arxiv.Search(
+            query=f"cat:{category}",
+            max_results=max_results_per_category,
+            sort_by=arxiv.SortCriterion.SubmittedDate,
+            sort_order=arxiv.SortOrder.Descending,
+        )
+
+        for result in client.results(search):
+            published = result.published.replace(tzinfo=None)
+            if published < cutoff_date:
+                continue
+
+            paper_id = result.entry_id.split("/")[-1]
+            if paper_id in papers_by_id:
+                merged = set(papers_by_id[paper_id]["categories"])
+                merged.update(result.categories)
+                papers_by_id[paper_id]["categories"] = sorted(merged)
+                continue
+
+            papers_by_id[paper_id] = {
+                "id": paper_id,
+                "title": result.title,
+                "abstract": result.summary,
+                "published": result.published.isoformat(),
+                "categories": result.categories,
+                "authors": [author.name for author in result.authors],
+                "references": [],  # arXiv API 不直接提供引用列表，需要额外引用数据源。
+                "pdf_url": result.pdf_url,
+            }
+
+    papers = sorted(
+        papers_by_id.values(),
+        key=lambda paper: paper["published"],
+        reverse=True,
+    )
+    print(f"✓ 获取到 {len(papers)} 篇去重论文")
     return papers
 
 
