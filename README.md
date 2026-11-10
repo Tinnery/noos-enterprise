@@ -56,7 +56,8 @@ Agent 不是等待指令的工具，而是能够自主探索、调查、构建�
 
 [查看完整探索文档](explorations/0001-ai-era-software-value/README.md)  
 [查看软件产业分类图谱](explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md)（含 AI & Model Systems 研究领域与 Security, Assurance & Trust 横切主题）  
-[查看 AI Systems & Engineering 技术与问题地图](explorations/0001-ai-era-software-value/frameworks/ai-systems-industry.md)
+[查看 AI Systems & Engineering 技术与问题地图](explorations/0001-ai-era-software-value/frameworks/ai-systems-industry.md)  
+[Opportunity Brief 机会研究卡模板](templates/opportunity-brief-template.md)：把技术/产业信号收敛为具体任务问题，不等同于产品立项
 
 ### Exploration 0002: 信号检测与社区情报系统
 
@@ -115,8 +116,9 @@ noos-enterprise/
 │   ├── README.md               # Skills 说明
 │   └── nuwa-skill/             # 女娲.skill（花叔）
 └── templates/                   # 模板
-    ├── hypothesis-template.md   # 机会假设模板
-    └── experiment-template.md   # 实验记录模板
+    ├── hypothesis-template.md   # 产品假设模板
+    ├── experiment-template.md   # 实验记录模板
+    └── opportunity-brief-template.md # 具体问题与机会研究卡
 ```
 
 ## 当前研究状态
@@ -133,6 +135,7 @@ noos-enterprise/
 - **2026-11-10**：分类图谱引入 Security, Assurance & Trust 横切研究主题（七个可信基础方向 + 信任链；核实 NIST NICE 2.2.0 / OWASP ASVS 5.0.0 / ACSC Secure by Design 等引用）；完成检测器测试套件（13 项）并集成 CI
 - **2026-11-10**：新增漏洞研究产业框架（产业关系、上报市场运行规则、合规边界、黑灰产经济作用）；图谱第 3 节拆分为漏洞研究产业与软件可信度产业双主题
 - **2026-11-10**：新增 AI Systems & Engineering 独立产业与技术机会图谱；扩展 arXiv/GitHub 采集覆盖，增加配置测试，并明确技术信号与真实需求之间的证据边界
+- **2026-11-10**：统一 Exploration 0002 的数据源状态与成功标准；增加 Opportunity Brief 模板和从研究领域/技术分支到具体任务问题的 Agent 规则
 
 ---
 

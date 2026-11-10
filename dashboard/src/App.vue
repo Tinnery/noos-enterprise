@@ -65,6 +65,7 @@ const explorationGroups: DocumentGroup[] = [
       { title: '三角验证框架', description: '多来源交叉检验方法', path: 'explorations/0001-ai-era-software-value/deep-research/08-triangulation-framework.md' },
       { title: 'HYP-001 验证工具包', description: '小企业工作任务观察与验证计划', path: 'explorations/0001-ai-era-software-value/validation/hyp-001-toolkit.md' },
       { title: 'HYP-005 验证工具包', description: '维修场景研究与专业边界', path: 'explorations/0001-ai-era-software-value/validation/hyp-005-toolkit.md' },
+      { title: 'Opportunity Brief 模板', description: '把技术信号转为具体角色、任务、当前替代方案、成本与反证', path: 'templates/opportunity-brief-template.md' },
     ],
   },
   {
