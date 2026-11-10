@@ -44,7 +44,9 @@ def fetch_arxiv_papers(days_back=7, max_results=None):
     
     print(f"正在获取 arXiv 论文（最近 {days_back} 天）...")
     
-    for result in search.results():
+    # arxiv 4.x API: 使用 Client 执行搜索
+    client = arxiv.Client()
+    for result in client.results(search):
         # 检查日期
         if result.published.replace(tzinfo=None) < cutoff_date:
             continue
@@ -89,7 +91,7 @@ def save_papers_to_db(papers):
         try:
             cursor.execute("""
                 INSERT OR IGNORE INTO papers 
-                (id, title, abstract, published, categories, authors, references)
+                (id, title, abstract, published, categories, authors, "references")
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
                 paper["id"],
