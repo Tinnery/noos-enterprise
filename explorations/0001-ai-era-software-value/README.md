@@ -412,7 +412,7 @@ Small Organization Enablement 和 Accessibility & Inclusion 可能是有价值�
 | 06 | [利益相关者视角分离](deep-research/06-stakeholder-perspectives.md) | 从最终用户、现有从业者、监管方、生态伙伴 4 个视角分析每个假设 | ✅ 完成 |
 | 07 | [证据升级路径](deep-research/07-evidence-upgrade-path.md) | 为每个假设定义从 L1→L2→L3 的证据升级路径 | ✅ 完成 |
 | 08 | [三角验证框架](deep-research/08-triangulation-framework.md) | 构建定量数据、定性洞察、实验验证三个独立验证维度的整合方法 | ✅ 完成 |
-| 09 | [代码变更可信验证试点](deep-research/09-change-assurance-pilot.md) | 复核 FastAPI 5 个明确披露 Codex 辅助的 PR，检查 base 重放、测试失败归因和 CI 证据边界 | 🟡 Pilot 完成；跨仓库验证中 |
+| 09 | [代码变更可信验证试点](deep-research/09-change-assurance-pilot.md) | 复核 FastAPI 5 个 Codex PR 与 pytest 1 个 Claude Code PR，对比 base 重放、结构性测试和 CI 证据边界 | 🟡 Pilot 完成；跨仓库验证中 |
 
 ### 关键发现摘要
 
@@ -642,10 +642,10 @@ HYP-002 至 HYP-005 暂时保持待验证状态，不并行招募五组用户。
 ### 2026-11-10（续五）— 代码变更可信验证实证试点
 
 **完成**：
-- 对 FastAPI 5 个公开 PR 做小规模试点，全部在 PR 正文明确披露 Codex 辅助和人工审阅
+- 对 FastAPI 5 个公开 PR 做主样本，并增加 pytest 1 个 Claude Code PR 作为跨项目对照；AI 来源均来自 PR 作者公开披露
 - 固定并记录 base / head / merge SHA、改动文件、PR 地址与 Actions 原始 Job
 - 复核 3 个 PR 的基线行为测试失败（6、26、9 项），并复核 PR 版本测试通过记录
-- 发现 FastAPI 已具备 changed-tests-on-base 机制；初始“重跑新增测试”产品切口不具备足够差异化
+- 发现 FastAPI 已具备 changed-tests-on-base 机制；pytest 对照 PR 依赖可复现问题、结构性测试和跨平台 CI，而未观察到独立 base 重放 Job；初始“重跑新增测试”产品切口不具备足够差异化
 - 发现该机制仍存在文件级测试归因、任意非零退出码分类、无测试变更和需求追踪等验证边界
 - 将完整样本、工作流源码、判定规则、限制和下一轮方案写入 deep-research/09-change-assurance-pilot.md
 
