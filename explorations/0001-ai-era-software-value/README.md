@@ -439,6 +439,44 @@ Small Organization Enablement 和 Accessibility & Inclusion 可能是有价值�
 
 ---
 
+### 2026-11-10（续二）— 探索成果看板（可视化交付）
+
+**完成**：
+- 构建纯前端看板 `explorations/0001-ai-era-software-value/dashboard/`（Vite + Vue 3 + TS + ECharts + Naive UI，暗色主题，无后端）
+- 三个视图：① 分类图谱总览（10 类卡片）② AI 影响光谱（初步估计，待 Step 2 取证）③ 假设落图（呈现 5 假设集中区域、暴露未覆盖的 5 类）
+- 数据真源 `src/data/taxonomy.json`（从 Step 1 文档抽取）
+- 工程师实现 + QA 独立验证（构建复现 / 代码审查 / Edge 无头截图冒烟），全部 PASS
+
+**学习**：
+- 探索成果用交互式看板展示，比 markdown 更利于沟通与复盘
+- 纯前端 + 本地 JSON 即可，无需 FastAPI；后端留作后续接 Agent 的扩展位
+- AI 影响坐标属初步估计，UI 已明示"待 Step 2 取证"，不可当结论
+
+**下一步**：
+- Step 2：叠加真实 AI 影响证据，替换 preliminary 估计
+- 可选：补 Vitest 组件测试、做 manualChunks 拆分优化体积（当前单 chunk 808KB）
+
+---
+
+### 2026-11-10（续三）— 看板升级为 repo 级
+
+**背景**：原看板位于 `explorations/0001-ai-era-software-value/dashboard/`，是某探索的专属详情页。用户指出 repo 应承载多个探索，按探索专属看板不可扩展、也缺少"总览"。
+
+**完成**：
+- 将看板提到仓库根 `dashboard/`，重构为 **repo 级**：组合首页（Portfolio）+ 按探索 id 参数化的详情视图
+- 新增 `src/data/explorations-index.json`（探索清单：项目信息 + 各探索摘要）
+- 数据按探索隔离：`src/data/explorations/<id>.json`（0001 已迁入），`index.ts` 提供 `getExplorationData(id)` / `getExplorationSummary(id)`
+- 新增 `src/views/Portfolio.vue` 组合首页；`Overview/ImpactSpectrum/HypothesisMap` 改为接收 `data` 属性
+- 假设落图的"覆盖度发现"改为由数据动态推导（不再写死），适配任意探索
+- 构建通过（vue-tsc 0 错误），Edge 无头截图确认组合首页渲染正常
+
+**扩展方式**：新增探索 = 在 `explorations/` 加 `<id>.json` + 在 `index.ts` 的 dataMap 加一行 + 在清单加一条摘要。
+
+**下一步**：
+- 继续 Step 2（AI 影响取证）；后续探索（0002…）可直接复用该看板
+
+---
+
 ### 2026-03-18
 
 **完成**：
