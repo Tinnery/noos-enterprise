@@ -1,5 +1,7 @@
 # NOOS ENTERPRISE
 
+[在线研究档案（GitHub Pages）](https://tinnery.github.io/noos-enterprise/) · [GitHub 仓库](https://github.com/Tinnery/noos-enterprise)
+
 > *Explore. Discover. Create.*
 > 
 > *To boldly go where no one has gone before.*
@@ -49,10 +51,34 @@ Agent 不是等待指令的工具，而是能够自主探索、调查、构建�
 - **Huashu Design**：把设计师的工作方法变成 Agent 可执行的工作流
 - **达尔文.skill**：把"能力是否变好"变成可验证的循环
 
-这三个项目揭示了一个重要的产品形态转变：**软件的未来形态不一定是人打开、点击、操作的应用，也可以是被 Agent 加载、组合、执行和持续改进的知识资产。**
+这三个项目提出了一个值得继续检验的产品形态假设：**软件的一种可能形态，是被 Agent 加载、组合、执行和持续改进的知识资产。** 目前这只是基于公开案例形成的推断，尚未由真实用户使用、专业任务质量或付费行为验证。
 
 [查看完整探索文档](explorations/0001-ai-era-software-value/README.md)  
-[查看软件产业分类图谱](explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md)
+[查看软件产业分类图谱](explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md)（含 Security, Assurance & Trust 横切研究主题）
+
+### Exploration 0002: 信号检测与社区情报系统
+
+**状态**：进行中
+
+**研究问题**：
+- 如何在技术趋势成为主流之前，捕捉到早期的弱信号？
+- 如何从噪声中识别真正有意义的变化？
+- 如何理解和参与技术社区，建立情报网络？
+
+**研究方向**：
+- **弱信号检测**：引用网络异常、低星项目 trending、"放弃叙事"、跨社区重复话题
+- **社区结构分析**：关键人物识别、社区检测、影响力传播路径
+- **实践参与**：从被动监控到主动参与，通过贡献建立信息渠道
+
+**数据源分层**：
+- 学术层（arXiv）→ 开源层（GitHub）→ 社交层（Hacker News）→ 市场层（Crunchbase）
+
+**预期产出**：
+- 信号检测系统原型（Python 脚本套件）
+- 技术社区网络图谱
+- 机会发现报告生成机制
+
+[查看完整探索文档](explorations/0002-signal-detection-community-intelligence/README.md)
 
 ## 公开规范
 
@@ -66,11 +92,19 @@ noos-enterprise/
 ├── AGENTS.md                    # Agent 探索规则
 ├── VISION.md                    # 项目愿景和价值原则
 ├── LICENSE                      # Apache 2.0 许可证
+├── dashboard/                   # repo 级探索看板前端（静态构建，GitHub Pages 部署）
 ├── explorations/                # 探索任务
-│   └── 0001-ai-era-software-value/
-│       ├── README.md           # 第一个探索任务
-│       ├── frameworks/        # 分类框架与分析工具
-│       └── hypotheses/        # 产品假设文档（待验证）
+│   ├── 0001-ai-era-software-value/
+│   │   ├── README.md           # 第一个探索任务
+│   │   ├── frameworks/         # 分类框架与分析工具
+│   │   ├── hypotheses/         # 产品假设文档（待验证）
+│   │   ├── deep-research/      # 深度研究文档（证伪框架、反事实基线、三角验证等）
+│   │   └── validation/         # 假设验证工具包（用户访谈等）
+│   └── 0002-signal-detection-community-intelligence/
+│       ├── README.md           # 第二个探索任务
+│       ├── frameworks/         # 信号检测框架
+│       ├── scripts/            # 信号检测脚本套件
+│       └── data/               # 数据存储（运行时生成）
 ├── skills/                      # Agent Skills 目录
 │   ├── README.md               # Skills 说明
 │   └── nuwa-skill/             # 女娲.skill（花叔）
@@ -83,9 +117,15 @@ noos-enterprise/
 
 现有五份产品假设尚未获得真实用户行为证据。下一阶段暂停继续扩写假设，优先观察目标用户过去实际完成任务的方式、耗时、替代方案和已发生的支出。任何访谈、招募、个人信息收集或付费活动，都必须先取得 AGENTS.md 要求的人类明确授权。
 
+**在线浏览状态**：dashboard/ 是只读静态研究档案入口，通过 GitHub Actions 构建并发布到 GitHub Pages。页面提供项目规则、探索总览、产业分类图谱、产品假设和研究材料的导航；文档原文仍以 Git 仓库中的 Markdown 为准。该站点不提供后端 API，也不代表假设已获得现实验证。
+
 ## 探索日志
 
-- **2026-11-10**：启动 Noos Enterprise，开始第一次探索任务；集成花叔的女娲 skill；许可证更新为 Apache 2.0
+- **2026-11-09**：仓库初始化
+- **2026-11-10**：启动 Exploration 0001；集成花叔的女娲 skill；许可证更新为 Apache 2.0
+- **2026-11-10**：启动 Exploration 0002 - 信号检测与社区情报系统；设计四层架构（信号检测、社区分析、实践参与、反馈循环）；实现信号检测脚本套件（arXiv/GitHub/Hacker News 数据采集 + 四种弱信号检测算法）
+- **2026-11-10**：分类图谱引入 Security, Assurance & Trust 横切研究主题（七个可信基础方向 + 信任链；核实 NIST NICE 2.2.0 / OWASP ASVS 5.0.0 / ACSC Secure by Design 等引用）；完成检测器测试套件（13 项）并集成 CI
+- **2026-11-10**：新增漏洞研究产业框架（产业关系、上报市场运行规则、合规边界、黑灰产经济作用；核实《网络产品安全漏洞管理规定》《网络安全法》2026 修正文本、CVE CNA Rules 4.2.6、补天/360SRC 平台规则）；图谱第 3 节拆分为漏洞研究产业与软件可信度产业双主题
 
 ---
 

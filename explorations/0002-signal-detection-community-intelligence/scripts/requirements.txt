@@ -1,0 +1,11 @@
+# 信号检测系统依赖
+# 仅列出 scripts/ 中实际 import 的第三方库，按实际实现核对（2026-11-10）
+# sqlite3 / json / datetime / pathlib / argparse / statistics / typing 均为 Python 标准库，无需安装
+
+# 数据采集
+requests>=2.31.0        # fetch_github.py / fetch_hackernews.py / track_participation.py
+arxiv>=2.1.0            # fetch_arxiv.py
+
+# 数据处理与图分析
+numpy>=1.24.0           # detect_signals.py / analyze_community.py
+networkx>=3.1           # detect_signals.py / analyze_community.py
