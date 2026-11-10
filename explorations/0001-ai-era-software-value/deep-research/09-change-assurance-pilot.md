@@ -312,7 +312,7 @@ PR #16560 / #16555 的 snapshot 交互日志说明这种区分并非纸面问题
 - [test.yml at PR #16564 head SHA](https://github.com/fastapi/fastapi/blob/3d92fbb407ca10c1e58f44ef13c53888a94aaaf8/.github/workflows/test.yml)
 - [PR #16564 regression-test Job](https://github.com/fastapi/fastapi/actions/runs/39565876493/job/119107903012)
 - [PR #16564 Ubuntu / Python 3.13 full test Job](https://github.com/fastapi/fastapi/actions/runs/39565876493/job/119107976376)
-- [PR #16559 regression-test Job](https://github.com/fastapi/fastapi/actions/runs/395097232)
-- [PR #16557 regression-test Job](https://github.com/fastapi/fastapi/actions/runs/395064097)
+- [PR #16559 regression-test Job](https://github.com/fastapi/fastapi/actions/runs/39509723184/job/118927451731)
+- [PR #16557 regression-test Job](https://github.com/fastapi/fastapi/actions/runs/39506409538/job/118916329214)
 
 所有结论均限定于上述公开版本、工作流和日志。未来仓库版本变化后，必须重新固定 SHA 和采集记录。
