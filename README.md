@@ -1,5 +1,7 @@
 # NOOS ENTERPRISE
 
+[在线研究档案（GitHub Pages）](https://tinnery.github.io/noos-enterprise/) · [GitHub 仓库](https://github.com/Tinnery/noos-enterprise)
+
 > *Explore. Discover. Create.*
 > 
 > *To boldly go where no one has gone before.*
@@ -114,7 +116,7 @@ noos-enterprise/
 
 现有五份产品假设尚未获得真实用户行为证据。下一阶段暂停继续扩写假设，优先观察目标用户过去实际完成任务的方式、耗时、替代方案和已发生的支出。任何访谈、招募、个人信息收集或付费活动，都必须先取得 AGENTS.md 要求的人类明确授权。
 
-**看板工程状态**：dashboard/ 已有前端页面代码，但页面导入的 dashboard/src/data 模块未出现在当前 Git tree 中（src/data.ts、src/data/index.ts 和 README 所述 JSON 文件均不存在）。因此当前看板尚不能视为可构建、可运行的交付；需要补齐数据模块并重新执行类型检查与构建。
+**在线浏览状态**：dashboard/ 是只读静态研究档案入口，通过 GitHub Actions 构建并发布到 GitHub Pages。页面提供项目规则、探索总览、产业分类图谱、产品假设和研究材料的导航；文档原文仍以 Git 仓库中的 Markdown 为准。该站点不提供后端 API，也不代表假设已获得现实验证。
 
 ## 探索日志
 
