@@ -69,3 +69,7 @@ sensitive/
 
 # WorkBuddy system files
 .workbuddy/
+
+# VitePress generated files
+dashboard/.vitepress/cache/
+dashboard/.vitepress/.temp/

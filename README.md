@@ -99,7 +99,8 @@ noos-enterprise/
 ├── AGENTS.md                    # Agent 探索规则
 ├── VISION.md                    # 项目愿景和价值原则
 ├── LICENSE                      # Apache 2.0 许可证
-├── dashboard/                   # repo 级探索看板前端（静态构建，GitHub Pages 部署）
+├── index.md                     # Research Portal 首页（VitePress 直接编译仓库 Markdown）
+├── dashboard/                   # VitePress 配置与主题（GitHub Pages 静态发布）
 ├── explorations/                # 探索任务
 │   ├── 0001-ai-era-software-value/
 │   │   ├── README.md           # 第一个探索任务
@@ -125,7 +126,7 @@ noos-enterprise/
 
 现有五份产品假设尚未获得真实用户行为证据。下一阶段暂停继续扩写假设，优先观察目标用户过去实际完成任务的方式、耗时、替代方案和已发生的支出。任何访谈、招募、个人信息收集或付费活动，都必须先取得 AGENTS.md 要求的人类明确授权。
 
-**在线浏览状态**：dashboard/ 是只读静态研究档案入口，通过 GitHub Actions 构建并发布到 GitHub Pages。页面提供项目规则、探索总览、产业分类图谱、产品假设和研究材料的导航；文档原文仍以 Git 仓库中的 Markdown 为准。该站点不提供后端 API，也不代表假设已获得现实验证。
+**在线浏览状态**：Research Portal 由 VitePress 构建并通过 GitHub Actions 发布到 GitHub Pages。站点直接读取仓库中的 `explorations/`、`templates/`、`VISION.md` 和 `AGENTS.md` 等 Markdown 原文，生成站内阅读页面、分层导航、章节目录与本地全文搜索；不复制研究正文，不依赖后端 API。研究内容仍以 Git 仓库中的 Markdown 为唯一来源，站点展示不代表假设已获得现实验证。
 
 ## 探索日志
 
@@ -144,3 +145,6 @@ noos-enterprise/
 > — Seth Godin
 
 我们探索的不是技术能做什么，而是人类需要什么。
+
+
+- **2026-11-12**：将 GitHub Pages 从文档链接看板重构为 Research Portal；VitePress 直接编译仓库 Markdown，提供站内阅读、导航、章节目录与本地全文搜索。

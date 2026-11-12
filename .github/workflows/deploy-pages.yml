@@ -5,8 +5,10 @@ on:
     branches:
       - main
     paths:
+      - "index.md"
       - "dashboard/**"
       - "explorations/**"
+      - "templates/**"
       - "README.md"
       - "VISION.md"
       - "AGENTS.md"
@@ -15,7 +17,13 @@ on:
     branches:
       - main
     paths:
-      - "explorations/0002-signal-detection-community-intelligence/**"
+      - "index.md"
+      - "dashboard/**"
+      - "explorations/**"
+      - "templates/**"
+      - "README.md"
+      - "VISION.md"
+      - "AGENTS.md"
   workflow_dispatch:
 
 permissions:
@@ -48,6 +56,7 @@ jobs:
         run: python test_detectors.py
 
   build:
+    name: Build Research Portal
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -57,12 +66,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: dashboard/package-lock.json
 
-      - name: Install dependencies
+      - name: Install site dependencies
         working-directory: dashboard
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Build static site
         working-directory: dashboard
@@ -71,12 +78,12 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dashboard/dist
+          path: dashboard/.vitepress/dist
 
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: \${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
     permissions:

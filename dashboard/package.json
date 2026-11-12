@@ -1,25 +1,15 @@
 {
-  "name": "noos-enterprise-dashboard",
+  "name": "noos-enterprise-portal",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
-  "description": "Noos Enterprise — 探索成果可视化看板（repo 级，纯前端）：组合首页 + 各探索的分类图谱 / AI 影响光谱 / 假设落图",
+  "description": "Noos Enterprise Research Portal — VitePress site built directly from repository Markdown.",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview",
-    "typecheck": "vue-tsc -b"
-  },
-  "dependencies": {
-    "echarts": "^5.5.1",
-    "naive-ui": "^2.40.4",
-    "vue": "^3.5.13",
-    "vue-echarts": "^7.0.3"
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.1",
-    "typescript": "^5.7.2",
-    "vite": "^6.0.5",
-    "vue-tsc": "^2.2.0"
+    "vitepress": "1.6.4"
   }
 }
