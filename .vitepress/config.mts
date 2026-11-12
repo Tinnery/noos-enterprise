@@ -8,9 +8,7 @@ export default defineConfig({
   title: 'Noos Enterprise',
   description: '研究 AI 时代真正值得解决的软件问题。以真实问题为起点，以可追溯证据检验判断。',
   base: '/noos-enterprise/',
-  srcDir: '..',
   srcExclude: [
-    'dashboard/**',
     'skills/**',
     '.github/**',
     '**/node_modules/**',

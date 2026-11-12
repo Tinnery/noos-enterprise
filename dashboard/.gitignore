@@ -1,9 +1,0 @@
-node_modules/
-.vitepress/cache/
-.vitepress/dist/
-.vitepress/.temp/
-*.local
-.DS_Store
-*.log
-.vscode/*
-!.vscode/extensions.json

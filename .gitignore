@@ -71,5 +71,6 @@ sensitive/
 .workbuddy/
 
 # VitePress generated files
-dashboard/.vitepress/cache/
-dashboard/.vitepress/.temp/
+.vitepress/cache/
+.vitepress/dist/
+.vitepress/.temp/

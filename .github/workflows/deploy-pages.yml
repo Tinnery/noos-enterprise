@@ -6,7 +6,8 @@ on:
       - main
     paths:
       - "index.md"
-      - "dashboard/**"
+      - ".vitepress/**"
+      - "package.json"
       - "explorations/**"
       - "templates/**"
       - "README.md"
@@ -18,7 +19,8 @@ on:
       - main
     paths:
       - "index.md"
-      - "dashboard/**"
+      - ".vitepress/**"
+      - "package.json"
       - "explorations/**"
       - "templates/**"
       - "README.md"
@@ -68,17 +70,15 @@ jobs:
           node-version: 22
 
       - name: Install site dependencies
-        working-directory: dashboard
         run: npm install --no-audit --no-fund
 
       - name: Build static site
-        working-directory: dashboard
         run: npm run build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dashboard/.vitepress/dist
+          path: .vitepress/dist
 
   deploy:
     environment:

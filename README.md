@@ -100,7 +100,8 @@ noos-enterprise/
 ├── VISION.md                    # 项目愿景和价值原则
 ├── LICENSE                      # Apache 2.0 许可证
 ├── index.md                     # Research Portal 首页（VitePress 直接编译仓库 Markdown）
-├── dashboard/                   # VitePress 配置与主题（GitHub Pages 静态发布）
+├── .vitepress/                   # VitePress 配置、主题与站点样式
+├── package.json                  # Research Portal 构建命令与依赖
 ├── explorations/                # 探索任务
 │   ├── 0001-ai-era-software-value/
 │   │   ├── README.md           # 第一个探索任务

@@ -1,7 +1,7 @@
 {
   "name": "noos-enterprise-portal",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "Noos Enterprise Research Portal — VitePress site built directly from repository Markdown.",
   "scripts": {
