@@ -5,7 +5,8 @@
 **Noos Enterprise 仓库创建日期**：2026-11-09  
 **当前仓库内探索启动日期**：2026-11-10  
 **探索阶段**：阶段 1 - 发现与理解  
-**出版端输出**：Media Works Pilot 001（signal-formal-verification）— 将本探索的部分研究发现转化为面向非专业读者的科普文章
+
+**相关出版项目**：Media Works Pilot 001（signal-formal-verification）存在主题相关性，但该项目使用 Google DeepMind AlphaProof Code 论文及 Signal 协议规范作为研究材料，不直接消费本探索的研究成果。
 
 ## 研究问题
 
