@@ -771,6 +771,33 @@ HYP-002 至 HYP-005 暂时保持待验证状态，不并行招募五组用户。
 - 暂不开发 CLI、GitHub Action 或 SaaS 产品
 - 用户行为、人工时间成本和付费意愿仍未验证；任何外部联系前遵守 AGENTS.md 授权要求
 
+### 2026-11-12（续六）— PR Change Assurance：Experiment 0 人工证据重建
+
+**完成**：
+- 对六个 PR 逐一建立原始证据记录，回答七个问题：需求、代码变更、测试变更、Base/Head 执行、失败性质、测试-需求映射、未证明主张
+- 建立 `experiments/pr-change-assurance/` 目录结构，包含 README 和 `evidence/` 子目录
+- 创建六个证据文件：`fastapi-16557.md`、`fastapi-16559.md`、`fastapi-16564.md`、`fastapi-16555.md`、`fastapi-16560.md`、`pytest-15255.md`
+- 每个文件区分 Fact / Evidence / Judgment / Unknown，明确证据边界
+- 创建 `deep-research/10-pr-change-assurance-research.md`，记录 Experiment 0 的发现和经过校准的后续研究设计
+
+**学习**：
+- **需求来源的差异**：五个 FastAPI PR 均无关联 Issue，需求隐含在 PR 标题和测试断言中；pytest #15255 有独立 Issue 定义预期行为。这意味着 FastAPI 案例的 Test Oracle 和测试代码同源，无法独立验证"测试是否真的验证了需求"
+- **Base / Head 测试可比性**：FastAPI 的 `regression-test` Job 与 `test` 矩阵不是同条件对照——Base 只运行新增/修改的测试文件，Head 运行完整测试套件；"Base 失败 + Head 通过"不能证明新测试 specifically 因为新代码而通过
+- **失败分类的缺失**：FastAPI 工作流不区分 AssertionError、Snapshot mismatch、EOFError、Collection error；PR #16555 和 #16560 的基线重放日志以 snapshot 交互提示结束，Job 仍报告 success，这不是"基线行为失败"的明确证据，而是"日志诊断不充分"
+- **对照案例的价值**：pytest #15255 展示了不同类型的变更需要不同类型的验证证据——功能修复需要 red-on-base / green-on-head，性能优化需要结构性复杂度不变量
+
+**校准后的研究假设**：
+- H1（Test Oracle Independence）：在大多数开源 PR 中不切实际，因为 Test Oracle 和测试代码同源
+- H2（Base 重放作为验证机制）：是有用但不充分的证据，需要结合失败分类和测试-代码映射
+- H3（失败分类可以自动化）：第一版可以自动识别 AssertionError 和 Collection error，但 Snapshot mismatch 和 EOFError 需要人工判断
+- H4（Mutation Testing 的必要性）：在现有六个案例中价值有限，第一版不引入
+
+**决策**：
+- 继续实证研究，进入 Experiment 1：开发离线 Evidence Packet 原型
+- 第一版只要求解析固定原始数据、提取代码和测试变更、组织 Base / Head 执行证据、输出 Claim / Evidence / Unknown 记录
+- 不做 LLM 裁决、Web UI、数据库、通用 PR 自动审查、GitHub Action、SaaS
+- 先验证人工研究方法是否成立，再决定哪些步骤值得软件化
+
 ---
 
 > "The enterprise is a living thing. It's not a machine. It's a community of people working together toward a common goal."
