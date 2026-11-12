@@ -14,6 +14,9 @@ export default defineConfig({
     'skills/**',
     '.github/**',
     '**/node_modules/**',
+    // This generated snapshot contains raw HTML fragments copied from community posts.
+    // Keep the source data intact, but do not treat it as a reader-facing Markdown page.
+    'explorations/0002-signal-detection-community-intelligence/data/signals/report_2026-11-10.md',
   ],
   lastUpdated: true,
   cleanUrls: false,
@@ -98,7 +101,6 @@ export default defineConfig({
           text: '采集与分析报告',
           collapsed: false,
           items: [
-            { text: '综合信号报告', link: exploration0002 + '/data/signals/report_2026-11-10' },
             { text: '社区分析报告', link: exploration0002 + '/data/signals/community_report' },
             { text: '反馈循环报告', link: exploration0002 + '/data/signals/feedback_report' },
             { text: '参与机会报告', link: exploration0002 + '/data/signals/participation_report' },
