@@ -27,6 +27,7 @@ Agent 不是等待指令的工具，而是能够自主探索、调查、构建�
 > 哪些需求过去因为成本太高而无人服务，现在终于可以被满足了？
 > 
 > 哪些产品即使 AI 能写出代码，也仍然需要长期的专业知识、数据、信任和运营？
+> AI 产业自身的模型、推理、数据、Agent、评估、安全和开发工具链，还存在哪些值得深入解决的工程问题？
 
 ## 当前探索任务
 
@@ -54,24 +55,28 @@ Agent 不是等待指令的工具，而是能够自主探索、调查、构建�
 这三个项目提出了一个值得继续检验的产品形态假设：**软件的一种可能形态，是被 Agent 加载、组合、执行和持续改进的知识资产。** 目前这只是基于公开案例形成的推断，尚未由真实用户使用、专业任务质量或付费行为验证。
 
 [查看完整探索文档](explorations/0001-ai-era-software-value/README.md)  
-[查看软件产业分类图谱](explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md)（含 Security, Assurance & Trust 横切研究主题）
+[查看软件产业分类图谱](explorations/0001-ai-era-software-value/frameworks/software-landscape-taxonomy.md)（含 AI & Model Systems 研究领域与 Security, Assurance & Trust 横切主题）  
+[查看 AI Systems & Engineering 技术与问题地图](explorations/0001-ai-era-software-value/frameworks/ai-systems-industry.md)  
+[Opportunity Brief 机会研究卡模板](templates/opportunity-brief-template.md)：把技术/产业信号收敛为具体任务问题，不等同于产品立项
 
 ### Exploration 0002: 信号检测与社区情报系统
 
 **状态**：进行中
 
 **研究问题**：
-- 如何在技术趋势成为主流之前，捕捉到早期的弱信号？
-- 如何从噪声中识别真正有意义的变化？
-- 如何理解和参与技术社区，建立情报网络？
+- 如何从技术变化和工程实践中发现值得深入研究的领域与细分分支？
+- 如何从公开技术信号进一步找到具体工作问题，而不是把热度当成需求？
+- 如何用历史结果和现实证据检验信号质量？
 
 **研究方向**：
-- **弱信号检测**：引用网络异常、低星项目 trending、"放弃叙事"、跨社区重复话题
-- **社区结构分析**：关键人物识别、社区检测、影响力传播路径
-- **实践参与**：从被动监控到主动参与，通过贡献建立信息渠道
+- **AI & Model Systems**：模型、推理、Agent、RAG、评估、安全与开发工具
+- **软件工程基础分支**：程序分析、形式化方法、软件供应链、数据工程、分布式系统和可观测性
+- **问题线索**：从维护、迁移、失败、人工补救和成本讨论中识别待验证问题
+- **反馈验证**：技术信号只有经过具体任务、替代方案和经济后果调查，才能进入机会研究
 
-**数据源分层**：
-- 学术层（arXiv）→ 开源层（GitHub）→ 社交层（Hacker News）→ 市场层（Crunchbase）
+**数据源状态**：
+- **当前实现**：arXiv（论文元数据）→ GitHub（项目与 Star）→ Hacker News（帖子与评论）
+- **规划中**：采购、招聘、市场和真实用户行为数据；尚未接入，且涉及用户研究的行为需先获得明确授权
 
 **预期产出**：
 - 信号检测系统原型（Python 脚本套件）
@@ -79,6 +84,8 @@ Agent 不是等待指令的工具，而是能够自主探索、调查、构建�
 - 机会发现报告生成机制
 
 [查看完整探索文档](explorations/0002-signal-detection-community-intelligence/README.md)
+
+**AI 自身产业研究**：Exploration 0001 已新增 AI Systems & Engineering 独立研究地图，覆盖模型、推理、数据/上下文、Agent、评估、安全、开发者工具和专业系统。地图中的问题候选尚未被验证为产品需求。
 
 ## 公开规范
 
@@ -92,7 +99,9 @@ noos-enterprise/
 ├── AGENTS.md                    # Agent 探索规则
 ├── VISION.md                    # 项目愿景和价值原则
 ├── LICENSE                      # Apache 2.0 许可证
-├── dashboard/                   # repo 级探索看板前端（静态构建，GitHub Pages 部署）
+├── index.md                     # Research Portal 首页（VitePress 直接编译仓库 Markdown）
+├── .vitepress/                   # VitePress 配置、主题与站点样式
+├── package.json                  # Research Portal 构建命令与依赖
 ├── explorations/                # 探索任务
 │   ├── 0001-ai-era-software-value/
 │   │   ├── README.md           # 第一个探索任务
@@ -109,15 +118,16 @@ noos-enterprise/
 │   ├── README.md               # Skills 说明
 │   └── nuwa-skill/             # 女娲.skill（花叔）
 └── templates/                   # 模板
-    ├── hypothesis-template.md   # 机会假设模板
-    └── experiment-template.md   # 实验记录模板
+    ├── hypothesis-template.md   # 产品假设模板
+    ├── experiment-template.md   # 实验记录模板
+    └── opportunity-brief-template.md # 具体问题与机会研究卡
 ```
 
 ## 当前研究状态
 
 现有五份产品假设尚未获得真实用户行为证据。下一阶段暂停继续扩写假设，优先观察目标用户过去实际完成任务的方式、耗时、替代方案和已发生的支出。任何访谈、招募、个人信息收集或付费活动，都必须先取得 AGENTS.md 要求的人类明确授权。
 
-**在线浏览状态**：dashboard/ 是只读静态研究档案入口，通过 GitHub Actions 构建并发布到 GitHub Pages。页面提供项目规则、探索总览、产业分类图谱、产品假设和研究材料的导航；文档原文仍以 Git 仓库中的 Markdown 为准。该站点不提供后端 API，也不代表假设已获得现实验证。
+**在线浏览状态**：Research Portal 由 VitePress 构建并通过 GitHub Actions 发布到 GitHub Pages。站点直接读取仓库中的 `explorations/`、`templates/`、`VISION.md` 和 `AGENTS.md` 等 Markdown 原文，生成站内阅读页面、分层导航、章节目录与本地全文搜索；不复制研究正文，不依赖后端 API。研究内容仍以 Git 仓库中的 Markdown 为唯一来源，站点展示不代表假设已获得现实验证。
 
 ## 探索日志
 
@@ -125,7 +135,9 @@ noos-enterprise/
 - **2026-11-10**：启动 Exploration 0001；集成花叔的女娲 skill；许可证更新为 Apache 2.0
 - **2026-11-10**：启动 Exploration 0002 - 信号检测与社区情报系统；设计四层架构（信号检测、社区分析、实践参与、反馈循环）；实现信号检测脚本套件（arXiv/GitHub/Hacker News 数据采集 + 四种弱信号检测算法）
 - **2026-11-10**：分类图谱引入 Security, Assurance & Trust 横切研究主题（七个可信基础方向 + 信任链；核实 NIST NICE 2.2.0 / OWASP ASVS 5.0.0 / ACSC Secure by Design 等引用）；完成检测器测试套件（13 项）并集成 CI
-- **2026-11-10**：新增漏洞研究产业框架（产业关系、上报市场运行规则、合规边界、黑灰产经济作用；核实《网络产品安全漏洞管理规定》《网络安全法》2026 修正文本、CVE CNA Rules 4.2.6、补天/360SRC 平台规则）；图谱第 3 节拆分为漏洞研究产业与软件可信度产业双主题
+- **2026-11-10**：新增漏洞研究产业框架（产业关系、上报市场运行规则、合规边界、黑灰产经济作用）；图谱第 3 节拆分为漏洞研究产业与软件可信度产业双主题
+- **2026-11-10**：新增 AI Systems & Engineering 独立产业与技术机会图谱；扩展 arXiv/GitHub 采集覆盖，增加配置测试，并明确技术信号与真实需求之间的证据边界
+- **2026-11-10**：统一 Exploration 0002 的数据源状态与成功标准；增加 Opportunity Brief 模板和从研究领域/技术分支到具体任务问题的 Agent 规则
 
 ---
 
@@ -134,3 +146,6 @@ noos-enterprise/
 > — Seth Godin
 
 我们探索的不是技术能做什么，而是人类需要什么。
+
+
+- **2026-11-12**：将 GitHub Pages 从文档链接看板重构为 Research Portal；VitePress 直接编译仓库 Markdown，提供站内阅读、导航、章节目录与本地全文搜索。

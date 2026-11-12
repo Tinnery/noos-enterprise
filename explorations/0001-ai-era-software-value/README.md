@@ -323,6 +323,17 @@ Small Organization Enablement 和 Accessibility & Inclusion 可能是有价值�
 
 ---
 
+## AI Systems & Engineering：AI 自身作为独立研究领域
+
+现有 HYP-001~005 主要是把 AI 用于小企业、家庭、农业、老年人和蓝领等场景的应用层假设。它们没有覆盖 AI 产业自身的模型、推理、数据/上下文、Agent、评估、安全和开发者工具链。
+
+这不是通过增加一个“AI 软件类别”来补齐，而是将 AI & Model Systems 作为独立研究领域，连接技术分支与具体工作问题。
+
+- [AI Systems & Engineering：产业与技术机会图谱](frameworks/ai-systems-industry.md)
+- [软件产业分类图谱](frameworks/software-landscape-taxonomy.md)
+
+该地图列出的七个具体问题候选均为待调查假设。当前不新建独立 Exploration，不把研究方向直接转化为产品承诺。
+
 ## 五个产品假设
 
 基于以上研究，我形成以下五个产品假设：
@@ -454,7 +465,7 @@ HYP-003/004/005 在个人工程师约束下**不可行**，需要：
 
 ## 深层研究（Deep Research）
 
-基于深层需求分析文档的要求，对 5 个产品假设进行了系统性的深度研究，产出了 8 个分析框架。所有文档位于 `deep-research/` 目录下。
+基于深层需求分析文档的要求，对 5 个产品假设进行了系统性的深度研究，产出了 8 个分析框架。随后新增 1 份基于公开 PR / CI 原始记录的代码变更可信验证试点。所有文档位于 `deep-research/` 目录下。
 
 ### 交付物清单
 
@@ -468,6 +479,7 @@ HYP-003/004/005 在个人工程师约束下**不可行**，需要：
 | 06 | [利益相关者视角分离](deep-research/06-stakeholder-perspectives.md) | 从最终用户、现有从业者、监管方、生态伙伴 4 个视角分析每个假设 | ✅ 完成 |
 | 07 | [证据升级路径](deep-research/07-evidence-upgrade-path.md) | 为每个假设定义从 L1→L2→L3 的证据升级路径 | ✅ 完成 |
 | 08 | [三角验证框架](deep-research/08-triangulation-framework.md) | 构建定量数据、定性洞察、实验验证三个独立验证维度的整合方法 | ✅ 完成 |
+| 09 | [代码变更可信验证试点](deep-research/09-change-assurance-pilot.md) | 复核 FastAPI 5 个 Codex PR 与 pytest 1 个 Claude Code PR，对比 base 重放、结构性测试和 CI 证据边界 | 🟡 Pilot 完成；跨仓库验证中 |
 
 ### 关键发现摘要
 
@@ -694,7 +706,7 @@ HYP-002 至 HYP-005 暂时保持待验证状态，不并行招募五组用户。
 
 ---
 
-### 2026-11-10（续五）— 需求兑现方法论落地
+### 2026-11-10（续五-A）— 需求兑现方法论落地
 
 **完成**：
 - 创建 `frameworks/demand-fulfillment-methodology.md`：需求兑现方法论框架（哲学基础 + JTBD/ODI/Revealed Preference 三大方法论 + 验证标准 + 研究诚实性声明）
@@ -737,6 +749,27 @@ HYP-002 至 HYP-005 暂时保持待验证状态，不并行招募五组用户。
 - 使用 Job Map 模板记录 AI Agent 在真实任务中的八步骤（从 HYP-005 的技工场景开始）
 - 收集首批 Switch Events 数据，建立补偿行为和放弃点的基线
 - 验证 Opportunity Algorithm 的预测效度（需要 6-12 个月的纵向数据）
+
+### 2026-11-10（续五-B）— 代码变更可信验证实证试点
+
+**完成**：
+- 对 FastAPI 5 个公开 PR 做主样本，并增加 pytest 1 个 Claude Code PR 作为跨项目对照；AI 来源均来自 PR 作者公开披露
+- 固定并记录 base / head / merge SHA、改动文件、PR 地址与 Actions 原始 Job
+- 复核 3 个 PR 的基线行为测试失败（6、26、9 项），并复核 PR 版本测试通过记录
+- 发现 FastAPI 已具备 changed-tests-on-base 机制；pytest 对照 PR 依赖可复现问题、结构性测试和跨平台 CI，而未观察到独立 base 重放 Job；初始"重跑新增测试"产品切口不具备足够差异化
+- 发现该机制仍存在文件级测试归因、任意非零退出码分类、无测试变更和需求追踪等验证边界
+- 将完整样本、工作流源码、判定规则、限制和下一轮方案写入 deep-research/09-change-assurance-pilot.md
+
+**学习**：
+- CI Job 绿色不等于验证证据有效，必须读取原始日志并区分行为断言失败、snapshot 交互异常和环境错误
+- 成熟项目已经实现部分 red-on-base / green-on-head，不能把基础回归重放包装成新产品
+- 一个项目的 5 个相关 PR 不能代表个人程序员总体，更不能证明商业需求
+- 下一步研究重点应是验证证据的归因和完整性，而非再造测试执行平台
+
+**决策**：
+- 继续跨仓库实证研究，扩大至不同规模项目和个人维护者
+- 暂不开发 CLI、GitHub Action 或 SaaS 产品
+- 用户行为、人工时间成本和付费意愿仍未验证；任何外部联系前遵守 AGENTS.md 授权要求
 
 ---
 

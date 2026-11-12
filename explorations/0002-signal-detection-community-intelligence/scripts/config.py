@@ -23,16 +23,30 @@ DATA_DIR.mkdir(exist_ok=True)
 
 # API 配置
 ARXIV_CONFIG = {
-    "categories": ["cs.AI", "cs.LG", "cs.CL", "cs.CV"],
-    "max_results": 100,
+    # AI 自身 + 安全、软件工程、数据系统、分布式系统和编程语言等技术分支。
+    "categories": [
+        "cs.AI", "cs.LG", "cs.CL", "cs.CV",
+        "cs.CR", "cs.SE", "cs.DB", "cs.DC", "cs.PL", "cs.IR",
+    ],
+    # 每个类别独立采样，避免一个大类吞没其他技术分支。
+    "max_results_per_category": 20,
     "sort_by": "submittedDate",
 }
 
 GITHUB_CONFIG = {
     "token": os.getenv("GITHUB_TOKEN", ""),  # 设置环境变量 GITHUB_TOKEN
-    "topics": ["artificial-intelligence", "machine-learning", "llm", "agent"],
+    # 主题覆盖是研究采样范围，不代表领域完整性或需求强度。
+    "topics": [
+        "artificial-intelligence", "ai-agents", "inference", "rag",
+        "llm-evaluation", "cybersecurity", "software-supply-chain",
+        "developer-tools", "data-engineering", "observability",
+    ],
     "min_stars": 10,
     "max_stars": 100,
+    # GitHub 搜索 API 有配额限制；每个 Topic 仅采第一页。
+    "max_pages_per_topic": 1,
+    "max_repos_per_topic": 30,
+    "search_delay_seconds": 2 if os.getenv("GITHUB_TOKEN") else 7,
 }
 
 HACKERNEWS_CONFIG = {

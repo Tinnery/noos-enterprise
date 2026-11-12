@@ -257,21 +257,28 @@ def save_star_history_to_db(repo_name, history):
     return processed
 
 
-def fetch_and_store_github(topics=None, max_repos_per_topic=50):
-    """获取并存储 GitHub 数据"""
+def fetch_and_store_github(topics=None, max_repos_per_topic=None):
+    """按多个技术分支采样 GitHub 项目，并限制搜索 API 请求量。"""
     if topics is None:
         topics = GITHUB_CONFIG["topics"]
-    
+    if max_repos_per_topic is None:
+        max_repos_per_topic = GITHUB_CONFIG["max_repos_per_topic"]
+
+    max_pages = GITHUB_CONFIG["max_pages_per_topic"]
+    search_delay = GITHUB_CONFIG["search_delay_seconds"]
     all_repos = []
-    
-    for topic in topics:
-        repos = fetch_trending_repos(topic=topic)
-        
+    topics = list(topics)
+
+    for index, topic in enumerate(topics):
+        repos = fetch_trending_repos(topic=topic, max_pages=max_pages)
+
         # 限制每个主题的项目数（在 extend 之前截断）
         if len(repos) > max_repos_per_topic:
             repos = repos[:max_repos_per_topic]
-        
+
         all_repos.extend(repos)
+        if index < len(topics) - 1:
+            time.sleep(search_delay)
     
     # 去重（同一项目出现在多个 topic 中，保留 stars 最高的记录）
     unique_dict = {}

@@ -97,6 +97,10 @@ recurring_topics = detector.detect_recurring_topics()
 detector.close()
 ```
 
+当前默认采集范围覆盖 AI 模型与 Agent、推理、RAG/评估、安全、软件供应链、数据工程、开发者工具和可观测性。arXiv 按类别独立采样；GitHub 每个 Topic 只采第一页，并按认证状态设置请求间隔，避免主题扩展导致无控制的 API 请求。
+
+这些采集范围用于扩大技术观察面，不表示相关领域已存在市场需求。Star、论文数量和社区讨论不能替代用户行为、采购和付费证据。
+
 ## 信号类型
 
 ### 1. 引用网络异常 (citation_anomaly)
@@ -183,13 +187,21 @@ data/
 
 ```python
 ARXIV_CONFIG = {
-    "categories": ["cs.AI", "cs.LG", "cs.CL", "cs.CV"],
-    "max_results": 100,
+    "categories": [
+        "cs.AI", "cs.LG", "cs.CL", "cs.CV",
+        "cs.CR", "cs.SE", "cs.DB", "cs.DC", "cs.PL", "cs.IR",
+    ],
+    "max_results_per_category": 20,
 }
 
 GITHUB_CONFIG = {
     "token": "your_github_token",  # 设置环境变量 GITHUB_TOKEN
-    "topics": ["artificial-intelligence", "machine-learning"],
+    "topics": ["artificial-intelligence", "ai-agents", "inference", "rag",
+               "llm-evaluation", "cybersecurity", "software-supply-chain",
+               "developer-tools", "data-engineering", "observability"],
+    "max_pages_per_topic": 1,
+    "max_repos_per_topic": 30,
+    "search_delay_seconds": 2 if os.getenv("GITHUB_TOKEN") else 7,
 }
 ```
 

@@ -238,6 +238,18 @@
 - 所有方法论都要求**真实用户参与**，不允许用 AI 模拟用户反馈
 - 详见 `frameworks/demand-fulfillment-methodology.md` 第 7 节"研究诚实性声明"
 
+### 研究坐标与从信号到问题
+
+每项研究至少区分三个坐标，不要把技术领域、技术手段和用户需求混成一个标签：
+
+1. **Research Domain（研究领域）**：研究对象属于哪个产业或专业领域，例如 AI & Model Systems、Cybersecurity & Trust、Data & Information Systems、Developer Infrastructure、Enterprise Software、Vertical Industry Systems、Consumer & Personal Software。
+2. **Technical Branch（技术分支）**：具体涉及什么专业问题，例如模型推理、RAG、Agent Runtime、Evals、程序分析、形式化验证、身份与授权、软件供应链或分布式系统。
+3. **Problem / Job（具体工作与需求）**：谁在什么情境下要完成什么任务，当前怎样解决，哪个环节存在摩擦，造成什么后果。
+
+这三个坐标允许交叉，不是互斥市场分类。每一项都应标注证据状态；不得把论文热度、GitHub Star、模型榜单、融资或社区讨论直接解释为用户需求、市场规模或付费意愿。
+
+当公开信号已收敛到一个可描述的具体问题，但解决方案尚不明确时，使用 `templates/opportunity-brief-template.md` 记录问题、角色、任务、当前替代方案、成本、证据与反证。只有技术热度、没有具体使用者和任务时，继续作为技术观察线索，不建立产品假设。
+
 ### 探索流程
 
 ```
@@ -278,6 +290,7 @@
 5. **Accessibility & Inclusion**：帮助数字能力不足或面临访问障碍的人群
 6. **Evidence & Knowledge**：把碎片化信息转化为可靠、可验证的知识
 7. **Public-interest Software**：探索不以商业收入为唯一目标的社会价值产品
+8. **AI Systems & Engineering**：研究模型、推理、数据/上下文、Agent、评估、安全和开发工具链自身的工程问题。技术热度只能作为研究线索，不能替代用户需求证据。
 
 ## 探索记录
 
