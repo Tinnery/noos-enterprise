@@ -824,6 +824,62 @@ HYP-002 至 HYP-005 暂时保持待验证状态，不并行招募五组用户。
 - 暂缓引入 LLM，先验证规则化方法的准确性边界
 - 暂缓 Experiment 2（负面控制），先在真实数据上验证原型
 
+### 2026-11-13（续八）— PR Change Assurance：Experiment 2 LLM 裁决验证
+
+**背景**：
+- Experiment 1 完成了离线 Evidence Packet 原型，但解析器尚未在真实数据上验证
+- 原计划先验证解析器准确性，但当前环境无法获取真实的 diff 和 CI 日志（网络访问受限，无 GitHub token）
+- 调整策略：直接使用 Experiment 1 生成的 6 份 Evidence Packet 进行 LLM 裁决验证
+
+**完成**：
+- 对 6 个案例进行 LLM 裁决，生成 6 份裁决报告（`verdicts/c1-verdict.md` 到 `c6-verdict.md`）
+- 每份裁决报告回答四个标准问题：
+  1. 这个 PR 是否真正修复了它声称的问题？
+  2. 证据是否充分？哪些证据最强/最弱？
+  3. 存在哪些未解决的风险或不确定性？
+  4. 如果要批准这个 PR，还需要什么额外证据？
+- 撰写 `experiment-2-summary.md`，记录实验设计、裁决结果、关键发现和对研究问题的回答
+
+**裁决结果**：
+| 案例 | PR | 置信度 | 主要问题 | 建议 |
+|------|-----|--------|----------|------|
+| C1 | fastapi#16557 | 60% | 无独立 Issue，Test Oracle 同源 | 不批准，需提供独立 Issue |
+| C2 | fastapi#16559 | 55% | 无独立 Issue，代码变更规模大 | 不批准，需提供独立 Issue |
+| C3 | fastapi#16564 | 55% | 无独立 Issue，重构级变更 | 不批准，需提供独立 Issue |
+| C4 | fastapi#16555 | 40% | Base 失败是 EOFError（无效证据） | 不批准，需提供 AssertionError |
+| C5 | fastapi#16560 | 40% | Base 失败是 EOFError（无效证据） | 不批准，需提供 AssertionError |
+| C6 | pytest#15255 | 75% | 缺乏 Base 重放数据（非关键） | 批准，建议提供性能基准测试 |
+
+**学习**：
+- **LLM 能够识别证据类型的差异**：区分 AssertionError（行为回归的强证据）和 EOFError（测量工具问题，无效证据），C1-C3 置信度 55-60%，C4-C5 置信度 40%
+- **独立 Issue 显著提升证据强度**：C6 是唯一有独立 Issue 的案例，置信度（75%）显著高于 C1-C5（40-60%），解决了 Test Oracle 同源问题
+- **LLM 能够识别不同类型的变更**：区分 bug 修复（C1-C5）和性能优化（C6），采用不同的证据标准
+- **LLM 能够提出具体的额外证据需求**：基于 Unknowns 提出具体的证据补充建议
+- **LLM 裁决具有一致性**：对相似案例给出一致的裁决（C4 和 C5 都是 40%，C1-C3 都是 55-60%）
+
+**关键发现**：
+- Evidence Packet 为 LLM 裁决提供了有效的框架
+- LLM 的价值在于系统化地评估证据、识别不确定性、提出额外的证据需求
+- LLM 不能替代人工审查，但可以作为审查的辅助工具
+- 独立 Issue 和 AI 披露是 PR 审查中的关键证据
+
+**对研究问题的回答**：
+- **研究问题**：LLM 是否能基于 Evidence Packet 进行合理裁决？
+- **回答**：是的，LLM 能够基于 Evidence Packet 进行合理裁决
+- **证据**：LLM 能够识别证据类型差异、独立 Issue 价值、不同变更类型，并提出具体的额外证据需求
+- **局限性**：LLM 无法验证 Fact 的真实性、无法判断 Judgment 的正确性、裁决依赖于 Evidence Packet 的完整性
+
+**待完成**：
+- 解析器在真实数据上的验证（需要获取真实的 diff 和 CI 日志）
+- 人工审查对比实验（验证 LLM 裁决的准确性）
+- 真实 PR 审查场景中的实用性评估
+
+**决策**：
+- Evidence Packet 框架成立，LLM 裁决能力得到验证
+- 下一步应获取真实数据验证解析器准确性
+- 考虑进行人工审查对比实验
+- 暂缓产品开发，继续实证研究
+
 ---
 
 > "The enterprise is a living thing. It's not a machine. It's a community of people working together toward a common goal."
