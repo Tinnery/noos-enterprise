@@ -798,6 +798,32 @@ HYP-002 至 HYP-005 暂时保持待验证状态，不并行招募五组用户。
 - 不做 LLM 裁决、Web UI、数据库、通用 PR 自动审查、GitHub Action、SaaS
 - 先验证人工研究方法是否成立，再决定哪些步骤值得软件化
 
+### 2026-11-13（续七）— PR Change Assurance：Experiment 1 离线 Evidence Packet 原型
+
+**完成**：
+- 开发离线 Evidence Packet 原型（Python，无外部依赖），包含五个核心组件：数据模型、Diff 解析器、CI 日志解析器、证据生成器、报告生成器
+- 对六个案例运行原型，生成六份 Evidence Packet 报告（`output/c1-c6-evidence-packet.md`）
+- 验证原型能够正确区分 AssertionError（行为回归的强证据）和 EOFError（测量工具问题，无效证据）
+- 验证原型能够识别需求独立性（有/无独立 Issue）、AI 披露、Base/Head 可比性
+- 撰写 `experiment-1-summary.md`，记录实现、验证结果、发现和局限性
+
+**学习**：
+- **可以机械化的部分**：PR 元数据提取、函数级变更识别、CI 摘要统计、AssertionError/EOFError/Snapshot mismatch 识别、Claim/Evidence/Unknown 结构组织
+- **不能机械化的部分**：需求-测试映射判断（测试是否真的验证了需求）、失败性质的最终分类（需要理解上下文）、Snapshot 差异的语义理解（是否为预期行为变化）、Base/Head 可比性的量化
+- **原型的局限性**：当前输入数据是手动构造的（基于 Experiment 0 的证据文件），没有直接从 GitHub API 或 CI 日志文件提取数据；`ci_log_parser.py` 和 `diff_parser.py` 已实现但未在真实日志/diff 上运行
+- **关键洞察**：机械化的价值不在于替代人工判断，而在于减少重复劳动、标准化证据组织、明确人工判断的边界
+
+**验证结果**：
+- C1-C3（AssertionError 案例）：正确生成 4 个 Evidence（代码变更、测试变更、Base 失败、Head 通过）和 4 个 Unknown
+- C4-C5（EOFError 案例）：正确生成 3 个 Evidence（不生成 Base 失败证据），识别 EOFError 为无效证据
+- C6（pytest 案例）：正确生成 2 个 Claims（PR 标题 + Issue 需求）和 1 个 Unknown（只有修复边界问题）
+
+**决策**：
+- 原型的 Claim/Evidence/Unknown 结构成立，可以继续使用
+- 下一步应在真实的 CI 日志和 diff 文件上运行解析器，验证准确性
+- 暂缓引入 LLM，先验证规则化方法的准确性边界
+- 暂缓 Experiment 2（负面控制），先在真实数据上验证原型
+
 ---
 
 > "The enterprise is a living thing. It's not a machine. It's a community of people working together toward a common goal."
