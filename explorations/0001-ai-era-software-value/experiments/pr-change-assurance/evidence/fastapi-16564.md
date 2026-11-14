@@ -179,7 +179,7 @@ if isinstance(received_body, FormData):
 | "旧代码的错误位置不正确" | ✅ 测试断言可直接验证 |
 | "修复不影响其他行为" | ✅ Head 4414 项测试通过 |
 | "这是完整的修复" | ⚠️ 无法确认，已经是第三次迭代 |
-| "AI 辅助了代码编写" | ⚠️ 分支名含 `codex/`，但 PR 正文无明确 AI 披露 |
+| "AI 辅助了代码编写" | ✅ PR 正文披露 Codex（gpt-6-astra）参与开发并经人工审阅（分支名 `codex/` 亦印证） |
 
 ---
 
@@ -192,4 +192,4 @@ if isinstance(received_body, FormData):
 | Head 4414 项通过 | **Fact**（日志可查） |
 | 失败性质为 AssertionError | **Judgment**（基于 09 描述和 diff 推断） |
 | 测试验证了修复行为 | **Judgment**（测试覆盖错误位置场景，但需求无独立定义） |
-| AI 参与程度 | **Unknown**（无明确披露） |
+| AI 参与程度 | **Fact**（PR 正文披露 Codex 辅助 + 人工审阅） |

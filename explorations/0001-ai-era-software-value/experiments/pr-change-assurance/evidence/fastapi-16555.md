@@ -155,7 +155,7 @@ def _get_param_aliases(
 | "Base 上测试失败" | ❌ 日志诊断不充分，无法确认 |
 | "snapshot 差异由本次修复引起" | ❌ 无法确认 |
 | "snapshot 差异属于预期行为" | ❌ 无法确认 |
-| "AI 辅助了代码编写" | ⚠️ 分支名含 `codex/`，但 PR 正文无明确 AI 披露 |
+| "AI 辅助了代码编写" | ✅ PR 正文披露 Codex（gpt-6-astra）参与开发并经人工审阅（分支名 `codex/` 亦印证） |
 
 ---
 
@@ -168,7 +168,7 @@ def _get_param_aliases(
 | Base 失败性质为行为回归 | **Unknown**（snapshot 差异性质不明） |
 | Head 测试通过 | **Fact**（Actions 记录） |
 | 测试验证了修复行为 | **Judgment**（测试覆盖别名选择场景） |
-| AI 参与程度 | **Unknown**（无明确披露） |
+| AI 参与程度 | **Fact**（PR 正文披露 Codex 辅助 + 人工审阅） |
 
 ---
 

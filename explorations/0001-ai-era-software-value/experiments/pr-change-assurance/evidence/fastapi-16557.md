@@ -177,7 +177,7 @@ for alias in aliases:
 | "修复了 Form Model 的 AliasChoices 提取" | ✅ 有代码变更和测试支持 |
 | "旧代码存在 bug" | ⚠️ 有测试失败支持，但无独立 Issue 记录 bug 的具体表现 |
 | "修复不影响其他行为" | ⚠️ Head 测试通过支持，但完整测试矩阵的具体结果未核验 |
-| "AI 辅助了代码编写" | ✅ PR 正文有 CodSpeed 报告，分支名含 `codex/`，但无明确 AI 披露声明 |
+| "AI 辅助了代码编写" | ✅ PR 正文披露 Codex（gpt-6-astra）参与开发并经人工审阅（分支名 `codex/` 亦印证） |
 
 ---
 
@@ -189,4 +189,4 @@ for alias in aliases:
 | 基线失败 9 项 | **Fact**（日志可查） |
 | 失败性质为 AssertionError | **Judgment**（基于 09 描述，未直接查看日志） |
 | 测试验证了修复行为 | **Judgment**（测试覆盖共享别名场景，但需求无独立定义） |
-| AI 参与程度 | **Unknown**（无明确披露） |
+| AI 参与程度 | **Fact**（PR 正文披露 Codex 辅助 + 人工审阅） |
